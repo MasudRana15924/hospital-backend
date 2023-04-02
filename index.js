@@ -3,11 +3,11 @@ const connectDatabase = require('./config/connection');
 const app = express();
 require('dotenv').config();
 app.use(express.json());
-const port = process.env.PORT;
+const port = process.env.PORT || 5000;
 connectDatabase();
-const user=require('./route/userRoutes')
+const routes=require('./route/routes')
 
-app.use("/api", user);
+app.use("/api", routes);
 
 // Handling Uncaught Exception
 process.on('uncaughtException', () => {

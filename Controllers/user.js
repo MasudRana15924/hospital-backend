@@ -2,7 +2,7 @@ const userModel = require('../models/User')
 
 exports.createUser = async (req, res) => {
     const { name, email, password } = req.body;
-    const newUser = await userModel.userCreate({
+    const newUser = await userModel.create({
         name,
         email,
         password,
@@ -10,6 +10,7 @@ exports.createUser = async (req, res) => {
     if(newUser){
         res.status(201).json({success:true,newUser})
     } 
+   
 };
 exports.getAllUsers = async (req, res) => {
    const users=await userModel.find();
