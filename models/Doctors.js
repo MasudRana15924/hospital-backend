@@ -1,26 +1,83 @@
 const mongoose = require("mongoose");
 
-const doctorSchema =new mongoose.Schema({
+const doctorSchema = mongoose.Schema({
     name: {
-		type: String,
-		required: true,
-	},
-	email: {
-		type: String,
-		required: true,
-	},
-	password: {
-		type: String,
-		required: true,
-	},
-	role: {
-		type: String,
-		default: "doctor",
-	  },
-	  createdAt: {
-		type: Date,
-		default: Date.now,
-	  },
+        type: String,
+        required: true,
+    },
+    phone: {
+        type: Number,
+        required: true,
+    },
+    email: {
+        type: String,
+        required: true,
+    },
+    work: {
+        type: String,
+        required: true,
+    },
+    expert: {
+        type: String,
+        required: true,
+    },
+    degree: {
+        type: String,
+        required: true,
+    },
+    ratings: {
+        type: Number,
+        default: 0,
+    },
+    description: {
+        type: String,
+        required: true,
+    },
+    images: [
+        {
+            public_id: {
+                type: String,
+                required: true,
+            },
+            url: {
+                type: String,
+                required: true,
+            },
+        },
+    ],
+    numOfReviews: {
+        type: Number,
+        default: 0,
+    },
+    reviews: [
+        {
+            //   user: {
+            //     type: mongoose.Schema.ObjectId,
+            //     ref: "User",
+            //     required: true,
+            //   },
+            name: {
+                type: String,
+                required: true,
+            },
+            rating: {
+                type: Number,
+                required: true,
+            },
+            comment: {
+                type: String,
+                required: true,
+            },
+        },
+    ],
+    fees: {
+        type: Number,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 module.exports = mongoose.model("Doctor", doctorSchema);
