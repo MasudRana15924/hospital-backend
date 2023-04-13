@@ -72,3 +72,92 @@ exports.deleteDoctor = asyncHandler(async (req, res, next) => {
     }
 
 });
+// Create New Review or Update the review
+exports.createDoctorReview = async (req, res, next) => {
+    const { rating, comment, doctorId } = req.body;
+
+    const review = {
+        user: req.user._id,
+        name: req.user.name,
+        rating: Number(rating),
+        comment,
+    };
+
+    const doctor = await doctorModel.findById(doctorId);
+
+    const isReviewed = doctor.reviews.find(
+        (rev) => rev.user.toString() === req.user._id.toString()
+    );
+
+    if (isReviewed) {
+        doctor.reviews.forEach((rev) => {
+            if (rev.user.toString() === req.user._id.toString())
+                (rev.rating = rating), (rev.comment = comment);
+        });
+    } else {
+        doctor.reviews.push(review);
+        doctor.numOfReviews = doctor.reviews.length;
+    }
+
+    let avg = 0;
+
+    doctor.reviews.forEach((rev) => {
+        avg += rev.rating;
+    }); //average review
+
+    doctor.ratings = avg / doctor.reviews.length;
+
+    await doctor.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+        success: true,
+    });
+};
+// Get All Reviews of a product
+exports.getDoctorReviews = async (req, res, next) => {
+    const doctor = await doctorModel.findById(req.query.id);
+    if (!doctor) {
+        res.json({ message: "Doctor is not Found" })
+    }
+    res.status(200).json({
+        success: true,
+        reviews: doctor.reviews,
+    });
+};
+// Delete Review
+exports.deleteReview = async (req, res, next) => {
+    const doctor = await doctorModel.findById(req.query.doctorId);
+    if (!doctor) {
+      return next(new ErrorHandler("Product not found", 404));
+    }
+    const reviews = doctor.reviews.filter(
+      (rev) => rev._id.toString() !== req.query.id.toString()
+    ); //jeita delete korbo seita hobe
+    let avg = 0;
+    reviews.forEach((rev) => {
+      avg += rev.rating;
+    });
+    let ratings = 0;
+    if (reviews.length === 0) {
+      ratings = 0;
+    } else {
+      ratings = avg / reviews.length;
+    }
+    const numOfReviews = reviews.length;
+    await doctorModel.findByIdAndUpdate(
+      req.query.doctorId,
+      {
+        reviews,
+        ratings,
+        numOfReviews,
+      },
+      {
+        new: true,
+        runValidators: true,
+        useFindAndModify: false,
+      }
+    );
+    res.status(200).json({
+      success: true,
+    });
+  };
