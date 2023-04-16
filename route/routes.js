@@ -2,6 +2,7 @@ const express = require("express");
 const { createUser, getAllUsers, loginUser, logout, forgotPassword, getUserDetails, updatePassword, updateProfile,getSingleUser, updateUserRole, deleteUser } = require("../Controllers/user");
 const { createDoctor, getAllDoctors, getDoctors, updateDoctor, deleteDoctor, doctorDetails, createDoctorReview,getDoctorReviews, deleteReview } = require("../Controllers/doctor");
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
+const { newAppointment, getSingleAppointment, myAppointment, getAllAppointments, updateBooking, deleteAppointment } = require("../Controllers/appointment");
 const router = express.Router();
 
 // users routes
@@ -31,6 +32,11 @@ router.route("/doctors/reviews").get(isAuthenticatedUser, getDoctorReviews);
 router.route("/doctors/reviews").delete(isAuthenticatedUser, deleteReview);
 
 // appointment routes 
-
+router.route("/new/appointment").post(isAuthenticatedUser, newAppointment);
+router.route("/appointment/:id").get(isAuthenticatedUser, getSingleAppointment);
+router.route("/mybooking").get(isAuthenticatedUser, myAppointment);
+router.route("/getall/appointment").get(isAuthenticatedUser,authorizeRoles("admin"), getAllAppointments);
+router.route("/admin/appointment/:id").put(isAuthenticatedUser, authorizeRoles("admin"), updateBooking)
+router.route("/admin/appointment/:id").delete(isAuthenticatedUser, authorizeRoles("admin"), deleteAppointment);
 
 module.exports = router;

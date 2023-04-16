@@ -128,9 +128,9 @@ exports.updatePassword = async (req, res, next) => {
 
 // update User Profile
 exports.updateProfile = async (req, res, next) => {
-    const {email,name}=req.body;
+    const { email, name } = req.body;
     const newUserData = {
-        email,name
+        email, name
     };
 
     // if (req.body.avatar !== "") {
@@ -198,7 +198,6 @@ exports.deleteUser = async (req, res, next) => {
     if (!user) {
         res.json({ message: "User does not exit" });
     }
-    // await user.remove();
     res.status(200).json({
         success: true,
         message: "User Deleted Successfully",

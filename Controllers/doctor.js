@@ -16,8 +16,8 @@ exports.getAllDoctors = asyncHandler(async (req, res) => {
         .pagination(resultPerPage);
     const doctors = await apiFeature.query;
     res.status(200).json({
-        success: true,
-        doctors,
+        success:true,
+         doctors
     });
 });
 // get all doctors for admin

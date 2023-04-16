@@ -13,6 +13,14 @@ const doctorSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    gender: {
+        type: String,
+        required: true,
+    },
+    location: {
+        type: String,
+        required: true,
+    },
     work: {
         type: String,
         required: true,
@@ -74,11 +82,11 @@ const doctorSchema = mongoose.Schema({
         type: Number,
         required: true
     },
-    user: {
-        type: mongoose.Schema.ObjectId,
-        ref: "User",
-        required: true,
-      },
+    // user: {
+    //     type: mongoose.Schema.ObjectId,
+    //     ref: "User",
+    //     required: true,
+    //   },
     createdAt: {
         type: Date,
         default: Date.now,
