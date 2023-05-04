@@ -75,20 +75,16 @@ exports.deleteDoctor = asyncHandler(async (req, res, next) => {
 // Create New Review or Update the review
 exports.createDoctorReview = async (req, res, next) => {
     const { rating, comment, doctorId } = req.body;
-
     const review = {
-        user: req.user._id,
-        name: req.user.name,
+         user: req.user._id,
+         name: req.user.name,
         rating: Number(rating),
         comment,
     };
-
     const doctor = await doctorModel.findById(doctorId);
-
     const isReviewed = doctor.reviews.find(
         (rev) => rev.user.toString() === req.user._id.toString()
     );
-
     if (isReviewed) {
         doctor.reviews.forEach((rev) => {
             if (rev.user.toString() === req.user._id.toString())
@@ -100,15 +96,11 @@ exports.createDoctorReview = async (req, res, next) => {
     }
 
     let avg = 0;
-
     doctor.reviews.forEach((rev) => {
         avg += rev.rating;
     }); //average review
-
     doctor.ratings = avg / doctor.reviews.length;
-
     await doctor.save({ validateBeforeSave: false });
-
     res.status(200).json({
         success: true,
     });

@@ -4,10 +4,10 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
 const userSchema = new mongoose.Schema({
-	// name: {
-	// 	type: String,
-	// 	required: true,
-	// },
+	name: {
+		type: String,
+		required: true,
+	},
 	email: {
 		type: String,
 		required: true,
@@ -22,8 +22,8 @@ const userSchema = new mongoose.Schema({
 		default: "user",
 	},
 	isVarified: {
-		type: String,
-		default: false,
+		type: Boolean,
+		default: 0,
 	},
 	// avatar: {
 	// 	public_id: {

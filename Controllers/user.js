@@ -1,20 +1,41 @@
 const userModel = require('../models/User');
 const sendToken = require('../utilies/jwtToken');
 const SendEmail = require('../utilies/sendEmail');
+const jwt = require("jsonwebtoken");
+const cache = require('memory-cache');
+const nodemailer = require("nodemailer");
 
 
 exports.createUser = async (req, res) => {
     const email = req.body.email;
     const findUser = await userModel.findOne({ email: email });
+    
     if (!findUser) {
         const newUser = await userModel.create(req.body);
         const token = newUser.getJWTToken();
+        await SendEmail({
+            email: newUser.email,
+            subject: "Activate Your Account",
+            message: '<p> Hii ' + newUser.name + ', please click here to  <a href="http://localhost:3000/verification/id=' + newUser._id + '">Verify Email</a> '
+        });
         sendToken(newUser, 201, res);
-    }
-    else {
-        res.json({ message: "User Already Exits" });
+    }else{
+        res.json({message:"Exits"})
     }
 };
+exports.verifyEmail = async (req, res) => {
+    try {
+        await userModel.findByIdAndUpdate(req.params.id, { $set: { isVarified: 1 } }, {
+            new: true,
+            runValidators: true,
+            useFindAndModify: false,
+        });
+        res.json({ message: 'verify' })
+
+    } catch (error) {
+        console.log(error);
+    }
+}
 exports.loginUser = async (req, res, next) => {
     const { email, password } = req.body;
     if (!email || !password) {

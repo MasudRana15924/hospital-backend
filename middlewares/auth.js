@@ -1,7 +1,7 @@
 const userModel = require('../models/User');
 const jwt = require("jsonwebtoken");
 exports.isAuthenticatedUser = async (req, res, next) => {
-  const { token } = req.cookies;
+  const token = req.header("Authorization");
   if (!token) {
     res.status(401).json({ message: "Please Login to access" });
   }

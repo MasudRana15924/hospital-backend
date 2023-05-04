@@ -1,5 +1,5 @@
 const express = require("express");
-const { createUser, getAllUsers, loginUser, logout, forgotPassword, getUserDetails, updatePassword, updateProfile,getSingleUser, updateUserRole, deleteUser } = require("../Controllers/user");
+const { createUser, getAllUsers, loginUser, logout, forgotPassword, getUserDetails, updatePassword, updateProfile,getSingleUser, updateUserRole, deleteUser, activateUser, verifyEmail } = require("../Controllers/user");
 const { createDoctor, getAllDoctors, getDoctors, updateDoctor, deleteDoctor, doctorDetails, createDoctorReview,getDoctorReviews, deleteReview } = require("../Controllers/doctor");
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 const { newAppointment, getSingleAppointment, myAppointment, getAllAppointments, updateBooking, deleteAppointment } = require("../Controllers/appointment");
@@ -7,6 +7,7 @@ const router = express.Router();
 
 // users routes
 router.route("/register").post(createUser);
+router.route("/verification?/:id").put(verifyEmail);
 router.route("/login").post(loginUser);
 router.route("/password/forgot").post(forgotPassword);
 router.route("/logout").get(logout);
@@ -27,7 +28,7 @@ router.route("/admin/doctors").get(isAuthenticatedUser, authorizeRoles("admin"),
 router.route("/doctor/:id").put(updateDoctor);
 router.route("/doctor/:id").delete(deleteDoctor);
 router.route("/doctor/:id").get(doctorDetails);
-router.route("/create/review").put(isAuthenticatedUser, createDoctorReview);
+router.route("/create/review").put( isAuthenticatedUser,createDoctorReview);
 router.route("/doctors/reviews").get(isAuthenticatedUser, getDoctorReviews);
 router.route("/doctors/reviews").delete(isAuthenticatedUser, deleteReview);
 
