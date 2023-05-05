@@ -1,5 +1,5 @@
 const express = require("express");
-const { createUser, getAllUsers, loginUser, logout, forgotPassword, getUserDetails, updatePassword, updateProfile,getSingleUser, updateUserRole, deleteUser, activateUser, verifyEmail } = require("../Controllers/user");
+const { createUser, getAllUsers, loginUser, logout, forgotPassword, getUserDetails, updatePassword, updateProfile,getSingleUser, updateUserRole, deleteUser, activateUser, verifyEmail, resetPassword } = require("../Controllers/user");
 const { createDoctor, getAllDoctors, getDoctors, updateDoctor, deleteDoctor, doctorDetails, createDoctorReview,getDoctorReviews, deleteReview } = require("../Controllers/doctor");
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 const { newAppointment, getSingleAppointment, myAppointment, getAllAppointments, updateBooking, deleteAppointment } = require("../Controllers/appointment");
@@ -10,6 +10,7 @@ router.route("/register").post(createUser);
 router.route("/verification?/:id").put(verifyEmail);
 router.route("/login").post(loginUser);
 router.route("/password/forgot").post(forgotPassword);
+router.route("/password/reset/:token").put(resetPassword);
 router.route("/logout").get(logout);
 router.route("/currentUserDetails").get(isAuthenticatedUser, getUserDetails);
 router.route("/updatePassword").put(isAuthenticatedUser, updatePassword);
