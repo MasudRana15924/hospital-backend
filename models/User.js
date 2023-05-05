@@ -25,16 +25,24 @@ const userSchema = new mongoose.Schema({
 		type: Boolean,
 		default: 0,
 	},
-	// avatar: {
-	// 	public_id: {
-	// 	  type: String,
-	// 	  required: true,
-	// 	},
-	// 	url: {
-	// 	  type: String,
-	// 	  required: true,
-	// 	},
-	//   },
+	gender: {
+		type: String,
+	},
+	phone: {
+		type: Number,
+	},
+	birthdate: {
+		type: Number,
+	},
+	avatar: {
+		public_id: {
+		  type: String,
+		//   required: true,
+		},
+		url: {
+		  type: String,
+		},
+	  },
 	createdAt: {
 		type: Date,
 		default: Date.now,
@@ -60,9 +68,7 @@ userSchema.methods.comparePassword = async function (password) {
 };
 // // Generating Password Reset Token
 userSchema.methods.getResetPasswordToken = function () {
-	// Generating Token with 20random word/bytes
 	const resetToken = crypto.randomBytes(20).toString("hex");
-	// token from resetToken database e ekta token generate hobe 
 	this.resetPasswordToken = crypto
 		.createHash("sha256")
 		.update(resetToken)

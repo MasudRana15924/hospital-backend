@@ -3,7 +3,10 @@ const SendEmail = require('../utilies/sendEmail');
 // Create new appointment
 exports.newAppointment = async (req, res, next) => {
   const {
-    bookingAppointment,
+    doctorname,
+    doctorfees,
+    doctorimage,
+    doctorId,
     phone,
     fees,
     totalFees,
@@ -16,7 +19,10 @@ exports.newAppointment = async (req, res, next) => {
   } = req.body;
 
   const appointment = await appointmentModel.create({
-    bookingAppointment,
+    doctorname,
+    doctorfees,
+    doctorimage,
+    doctorId,
     phone,
     fees,
     totalFees,
@@ -31,14 +37,15 @@ exports.newAppointment = async (req, res, next) => {
     await SendEmail({
       email: patientemail,
       subject: "You have booked an Appointment",
-      message: '<p> Hii ' + patientname + ', You have booked an Appointment '+ bookingAppointment+' '
+      message: '<p> Hii ' + patientname + ', You have booked an Appointment of Dr. '+ doctorname+' '
   });
   }
-
+  console.log(doctorname);
   res.status(201).json({
     success: true,
     appointment
   });
+
 };
 
 // get Single 
