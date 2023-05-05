@@ -1,22 +1,39 @@
 const appointmentModel = require('../models/Appointment');
+const SendEmail = require('../utilies/sendEmail');
 // Create new appointment
 exports.newAppointment = async (req, res, next) => {
   const {
     bookingAppointment,
     phone,
     fees,
-    schedule,
     totalFees,
+    patientname,
+    patientemail,
+    patientgender,
+    date,
+    schedule,
+    
   } = req.body;
 
   const appointment = await appointmentModel.create({
     bookingAppointment,
     phone,
     fees,
-    schedule,
     totalFees,
+    patientname,
+    patientemail,
+    patientgender,
+    date,
+    schedule,
     user: req.user._id,
   });
+  if(appointment){
+    await SendEmail({
+      email: patientemail,
+      subject: "You have booked an Appointment",
+      message: '<p> Hii ' + patientname + ', You have booked an Appointment '+ bookingAppointment+' '
+  });
+  }
 
   res.status(201).json({
     success: true,

@@ -14,9 +14,8 @@ const appointmentSchema = new mongoose.Schema({
       },
       image: {
         type: String,
-        required: true,
       },
-      doctor: {
+      doctorId: {
         type: mongoose.Schema.ObjectId,
         ref: "Doctor",
         required: true,
@@ -32,17 +31,26 @@ const appointmentSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-
   fees: {
     type: Number,
     required: true,
     default: 0,
   },
+  patientname: {
+    type: String,
+  },
+  patientemail: {
+    type: String,
+  },
+  patientgender: {
+    type: String,
+  },
   schedule: {
     type: String,
-    required: true,
   },
-
+  date: {
+    type: String,
+  },
   totalFees: {
     type: Number,
     required: true,
