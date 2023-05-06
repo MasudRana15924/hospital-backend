@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const cache = require('memory-cache');
 const nodemailer = require("nodemailer");
 const cloudinary = require('cloudinary');
-
+const crypto = require("crypto");
 
 exports.createUser = async (req, res) => {
     const email = req.body.email;
