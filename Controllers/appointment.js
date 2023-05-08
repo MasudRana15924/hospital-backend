@@ -1,4 +1,5 @@
 const appointmentModel = require('../models/Appointment');
+const ApiFeatures = require('../utilies/apiFeatures');
 const SendEmail = require('../utilies/sendEmail');
 // Create new appointment
 exports.newAppointment = async (req, res, next) => {
@@ -37,10 +38,9 @@ exports.newAppointment = async (req, res, next) => {
     await SendEmail({
       email: patientemail,
       subject: "You have booked an Appointment",
-      message: '<p> Hii ' + patientname + ', You have booked an Appointment of Dr. '+ doctorname+' '
+     message:`Hii ${patientname}, You have booked an Appointment of Dr. ${doctorname} \n\n Appointment Fees ${doctorfees} \n\n Appointment Date ${date} \n\n Appointment Schedule ${schedule}`
   });
   }
-  console.log(doctorname);
   res.status(201).json({
     success: true,
     appointment
@@ -67,18 +67,16 @@ exports.getSingleAppointment = async (req, res, next) => {
 // get logged in user  
 exports.myAppointment = async (req, res, next) => {
   const appointment = await appointmentModel.find({ user: req.user._id });
-
   res.status(200).json({
     success: true,
     appointment,
+
   });
 };
 // get all Appointments
 exports.getAllAppointments = async (req, res, next) => {
   const appointments = await appointmentModel.find();
-
   let totalAmount = 0;
-
   appointments.forEach((appointment) => {
     totalAmount += appointment.totalPrice;
   });

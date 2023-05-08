@@ -13,11 +13,15 @@ exports.getAllDoctors = asyncHandler(async (req, res) => {
     const apiFeature = new ApiFeatures(doctorModel.find(), req.query)
         .search()
         .filter()
-        .pagination(resultPerPage);
+        
     const doctors = await apiFeature.query;
+    apiFeature.pagination(resultPerPage);
     res.status(200).json({
         success:true,
-         doctors
+         doctors,
+         doctorCount,
+         resultPerPage
+
     });
 });
 // get all doctors for admin
