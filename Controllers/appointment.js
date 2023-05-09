@@ -75,15 +75,17 @@ exports.myAppointment = async (req, res, next) => {
 };
 // get all Appointments
 exports.getAllAppointments = async (req, res, next) => {
-  const appointments = await appointmentModel.find();
-  let totalAmount = 0;
-  appointments.forEach((appointment) => {
-    totalAmount += appointment.totalPrice;
-  });
+  const resultPerPage=3;
+  const appointmentCount=await appointmentModel.countDocuments();
+  // const appointments = await appointmentModel.find();
+  const apiFeature = new ApiFeatures(appointmentModel.find(),req.query);
+  const appointments = await apiFeature.query;
+  apiFeature.pagination(resultPerPage);
   res.status(200).json({
     success: true,
-    totalAmount,
     appointments,
+    resultPerPage,
+    appointmentCount
   });
 };
 // update 

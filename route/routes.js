@@ -37,7 +37,7 @@ router.route("/doctors/reviews").delete(isAuthenticatedUser, deleteReview);
 router.route("/new/appointment").post(isAuthenticatedUser, newAppointment);
 router.route("/appointment/:id").get(isAuthenticatedUser, getSingleAppointment);
 router.route("/mybooking").get(isAuthenticatedUser, myAppointment);
-router.route("/getall/appointment").get(isAuthenticatedUser,authorizeRoles("admin"), getAllAppointments);
+router.route("/getall/appointment").get(isAuthenticatedUser, authorizeRoles("admin"), getAllAppointments);
 router.route("/admin/appointment/:id").put(isAuthenticatedUser, authorizeRoles("admin"), updateBooking)
 router.route("/admin/appointment/:id").delete(isAuthenticatedUser, authorizeRoles("admin"), deleteAppointment);
 
