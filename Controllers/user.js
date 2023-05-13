@@ -2,41 +2,73 @@ const userModel = require('../models/User');
 const sendToken = require('../utilies/jwtToken');
 const SendEmail = require('../utilies/sendEmail');
 const jwt = require("jsonwebtoken");
-const cache = require('memory-cache');
-const nodemailer = require("nodemailer");
 const cloudinary = require('cloudinary');
 const crypto = require("crypto");
+const ErrorHandler = require("../utilies/ErrorHandler");
 
-exports.createUser = async (req, res) => {
-    const email = req.body.email;
-    const findUser = await userModel.findOne({ email: email });
-    
-    if (!findUser) {
-        const newUser = await userModel.create(req.body);
-        const token = newUser.getJWTToken();
+
+exports.createUser = async (req, res, next) => {
+    try {
+        const { name, email, password } = req.body;
+        const findUser = await userModel.findOne({ email: email });
+        if (findUser) {
+            return next(new ErrorHandler("User already exists", 400));
+        }
+        const user = {
+            name: name,
+            email: email,
+            password: password,
+
+        };
+        const activationToken = createActivationToken(user);
+        const activationUrl = `http://localhost:3000/activation/${activationToken}`;
         await SendEmail({
-            email: newUser.email,
-            subject: "Activate Your Account",
-            message: '<p> Hii ' + newUser.name + ', please click here to  <a href="http://localhost:3000/verification/id=' + newUser._id + '">Verify Email</a> '
+            email: user.email,
+            subject: "Activate your account",
+            message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
+
         });
-        sendToken(newUser, 201, res);
-    }else{
-        res.json({message:"Exits"})
+        res.status(201).json({
+            success: true,
+            message: `please check your email:- ${user.email} to activate your account!`,
+        });
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 400));
     }
 };
-exports.verifyEmail = async (req, res) => {
-    try {
-        await userModel.findByIdAndUpdate(req.params.id, { $set: { isVarified: 1 } }, {
-            new: true,
-            runValidators: true,
-            useFindAndModify: false,
-        });
-        res.json({ message: 'verify' })
+// create activation token
+const createActivationToken = (user) => {
+    return jwt.sign(user, process.env.ACTIVATION_SECRET, {
+        expiresIn: "5m",
+    });
+};
 
+exports.verifyEmail = async (req, res, next) => {
+    try {
+        const { activation_token } = req.body;
+        const newUser = jwt.verify(
+            activation_token,
+            process.env.ACTIVATION_SECRET
+        );
+        if (!newUser) {
+            return next(new ErrorHandler("Invalid token", 400));
+        }
+        const { name, email, password, } = newUser;
+        let user = await userModel.findOne({ email });
+        if (user) {
+            return next(new ErrorHandler("User already exists", 400));
+        }
+        user = await userModel.create({
+            name,
+            email,
+            password,
+        });
+        sendToken(user, 201, res);
     } catch (error) {
-        console.log(error);
+        return next(new ErrorHandler(error.message, 500));
     }
-}
+};
+
 exports.loginUser = async (req, res, next) => {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -44,9 +76,14 @@ exports.loginUser = async (req, res, next) => {
     }
     const user = await userModel.findOne({ email }).select("+password");
     if (!user) {
-        res.json({ message: "User not Exits" });
+        return next(new ErrorHandler("User doesn't exists!", 400));
     }
     const isPasswordMatched = await user.comparePassword(password);
+    if (!isPasswordMatched) {
+        return next(
+            new ErrorHandler("Email & password does not matched", 400)
+        );
+    }
     if (isPasswordMatched) {
         sendToken(user, 200, res);
     }
@@ -75,9 +112,6 @@ exports.forgotPassword = async (req, res, next) => {
     // Get ResetPassword Token
     const resetToken = user.getResetPasswordToken();
     await user.save({ validateBeforeSave: false }); //database e save
-    // const resetPasswordUrl = `${process.env.FRONTEND_URL}://${req.get(
-    //     "host"
-    // )}/password/reset/${resetToken}`;
     const resetPasswordUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
     const message = `Your password reset token is :- ${resetPasswordUrl}`;
     try {
@@ -150,25 +184,10 @@ exports.updatePassword = async (req, res, next) => {
 
 // update User Profile
 exports.updateProfile = async (req, res, next) => {
-    const { name ,gender,birthdate,phone} = req.body;
+    const { name, gender, birthdate, phone } = req.body;
     const newUserData = {
-        name ,gender,birthdate,phone
+        name, gender, birthdate, phone
     };
-
-    if (req.body.avatar !== "") {
-        const user = await userModel.findById(req.user.id);
-        const imageId = user.avatar.public_id;
-        await cloudinary.v2.uploader.destroy(imageId);
-        const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-            folder: "avatars",
-            width: 150,
-            crop: "scale",
-        });
-        newUserData.avatar = {
-            public_id: myCloud.public_id,
-            url: myCloud.secure_url,
-        };
-    }
     const user = await userModel.findByIdAndUpdate(req.user.id, newUserData, {
         new: true,
         runValidators: true,
@@ -180,6 +199,39 @@ exports.updateProfile = async (req, res, next) => {
         user
     });
 };
+
+exports.updateAvatar = async (req, res,next) => {
+    try {
+        if (req.body.avatar !== "") {
+            const user = await userModel.findById(req.user.id);
+            // const imageId = user.avatar.public_id;
+            // await cloudinary.v2.uploader.destroy(imageId);
+            const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+                folder: "avatars",
+                width: 150,
+                crop: "scale",
+            });
+            let newUserData;
+            newUserData.avatar = {
+                // public_id: myCloud.public_id,
+                url: myCloud.secure_url,
+            };
+        }
+        const user = await userModel.findByIdAndUpdate(req.user.id, newUserData, {
+            new: true,
+            runValidators: true,
+            useFindAndModify: false,
+        });
+
+        res.status(200).json({
+            success: true,
+            user
+        });
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 400));
+    }
+
+}
 // Get single user (admin)
 exports.getSingleUser = async (req, res, next) => {
     const user = await userModel.findById(req.params.id);

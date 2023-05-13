@@ -21,18 +21,14 @@ const userSchema = new mongoose.Schema({
 		type: String,
 		default: "user",
 	},
-	isVarified: {
-		type: Boolean,
-		default: 0,
-	},
 	gender: {
 		type: String,
 	},
 	phone: {
-		type: Number,
+		type: String,
 	},
 	birthdate: {
-		type: Number,
+		type: String,
 	},
 	avatar: {
 		public_id: {
@@ -41,6 +37,7 @@ const userSchema = new mongoose.Schema({
 		},
 		url: {
 		  type: String,
+		//   required: true,
 		},
 	  },
 	createdAt: {

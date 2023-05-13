@@ -1,13 +1,14 @@
 const express = require("express");
-const { createUser, getAllUsers, loginUser, logout, forgotPassword, getUserDetails, updatePassword, updateProfile,getSingleUser, updateUserRole, deleteUser, activateUser, verifyEmail, resetPassword } = require("../Controllers/user");
+const { createUser, getAllUsers, loginUser, logout, forgotPassword, getUserDetails, updatePassword, updateProfile,getSingleUser, updateUserRole, deleteUser, verifyEmail, resetPassword, updateAvatar } = require("../Controllers/user");
 const { createDoctor, getAllDoctors, getDoctors, updateDoctor, deleteDoctor, doctorDetails, createDoctorReview,getDoctorReviews, deleteReview } = require("../Controllers/doctor");
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 const { newAppointment, getSingleAppointment, myAppointment, getAllAppointments, updateBooking, deleteAppointment } = require("../Controllers/appointment");
+const { createNurse, getAllNurses } = require("../Controllers/nurse");
 const router = express.Router();
 
 // users routes
 router.route("/register").post(createUser);
-router.route("/verification?/:id").put(verifyEmail);
+router.route("/activation").post(verifyEmail);
 router.route("/login").post(loginUser);
 router.route("/password/forgot").post(forgotPassword);
 router.route("/password/reset/:token").put(resetPassword);
@@ -15,6 +16,7 @@ router.route("/logout").get(logout);
 router.route("/currentUserDetails").get(isAuthenticatedUser, getUserDetails);
 router.route("/updatePassword").put(isAuthenticatedUser, updatePassword);
 router.route("/update/currentUserdetails").put(isAuthenticatedUser, updateProfile);
+router.route("/update/avatar").put(isAuthenticatedUser, updateAvatar);
 router.route("/users").get(isAuthenticatedUser, authorizeRoles("admin"), getAllUsers);
 router.route("/admin/user/:id")
 .get(isAuthenticatedUser, authorizeRoles("admin"), getSingleUser)
@@ -40,5 +42,14 @@ router.route("/mybooking").get(isAuthenticatedUser, myAppointment);
 router.route("/getall/appointment").get(isAuthenticatedUser, authorizeRoles("admin"), getAllAppointments);
 router.route("/admin/appointment/:id").put(isAuthenticatedUser, authorizeRoles("admin"), updateBooking)
 router.route("/admin/appointment/:id").delete(isAuthenticatedUser, authorizeRoles("admin"), deleteAppointment);
+
+// nurses routes
+router.route("/create/nurse").post(isAuthenticatedUser, authorizeRoles("admin"), createNurse);
+router.route("/get/nurses").get(getAllNurses);
+
+
+
+
+
 
 module.exports = router;
