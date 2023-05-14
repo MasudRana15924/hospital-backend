@@ -29,3 +29,63 @@ exports.getAllNurses = asyncHandler(async (req, res) => {
 
     });
 });
+exports.getNurses = asyncHandler(async (req, res) => {
+    const Nurses = await nurseModel.find();
+    res.status(200).json({ success: true, Nurses });
+});
+exports.nurseDetails = asyncHandler(async (req, res) => {
+    const nurse = await nurseModel.findById(req.params.id);
+    if (!nurse) {
+        return res.status(500).json({
+            message: "Nurse is not Found !!"
+        });
+    }
+    res.status(200).json({
+        success: true,
+        nurse,
+    
+    });
+});
+exports.createNursesReview = async (req, res, next) => {
+    const { rating, comment, nurseId } = req.body;
+    const review = {
+         user: req.user._id,
+         name: req.user.name,
+        rating: Number(rating),
+        comment,
+    };
+    const nurse = await nurseModel.findById(nurseId);
+    const isReviewed = nurse.reviews.find(
+        (rev) => rev.user.toString() === req.user._id.toString()
+    );
+    if (isReviewed) {
+        nurse.reviews.forEach((rev) => {
+            if (rev.user.toString() === req.user._id.toString())
+                (rev.rating = rating), (rev.comment = comment);
+        });
+    } else {
+        nurse.reviews.push(review);
+        nurse.numOfReviews = nurse.reviews.length;
+    }
+
+    let avg = 0;
+    nurse.reviews.forEach((rev) => {
+        avg += rev.rating;
+    }); //average review
+    nurse.ratings = avg / nurse.reviews.length;
+    await nurse.save({ validateBeforeSave: false });
+    res.status(200).json({
+        success: true,
+    });
+};
+// Get All Reviews of a product
+exports.getNurseReviews = async (req, res, next) => {
+    const nurse = await nurseModel.findById(req.query.id);
+    if (!nurse) {
+        res.json({ message: "nurse is not Found" })
+    }
+    res.status(200).json({
+        success: true,
+        reviews: nurse.reviews,
+    });
+};

@@ -3,7 +3,8 @@ const { createUser, getAllUsers, loginUser, logout, forgotPassword, getUserDetai
 const { createDoctor, getAllDoctors, getDoctors, updateDoctor, deleteDoctor, doctorDetails, createDoctorReview,getDoctorReviews, deleteReview } = require("../Controllers/doctor");
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 const { newAppointment, getSingleAppointment, myAppointment, getAllAppointments, updateBooking, deleteAppointment } = require("../Controllers/appointment");
-const { createNurse, getAllNurses } = require("../Controllers/nurse");
+const { createNurse, getAllNurses, getNurses, nurseDetails, createNursesReview, getNurseReviews } = require("../Controllers/nurse");
+const { newHireNurse, getSingleHireNurse, myHireNurse, getAllHireNurse, updateHireNurse, deleteHireNurse } = require("../Controllers/hireNurse");
 const router = express.Router();
 
 // users routes
@@ -46,7 +47,18 @@ router.route("/admin/appointment/:id").delete(isAuthenticatedUser, authorizeRole
 // nurses routes
 router.route("/create/nurse").post(isAuthenticatedUser, authorizeRoles("admin"), createNurse);
 router.route("/get/nurses").get(getAllNurses);
+router.route("/admin/nurses").get(isAuthenticatedUser, authorizeRoles("admin"), getNurses);
+router.route("/nurse/:id").get(nurseDetails);
+router.route("/create/nurse/review").put( isAuthenticatedUser,createNursesReview);
+router.route("/nurses/reviews").get(isAuthenticatedUser, getNurseReviews);
 
+// hire nurse
+router.route("/new/hire/nurse").post(isAuthenticatedUser, newHireNurse);
+router.route("/hire/nurse/:id").get(isAuthenticatedUser, getSingleHireNurse);
+router.route("/my/hire").get(isAuthenticatedUser, myHireNurse);
+router.route("/getall/hire/nurse").get(isAuthenticatedUser, authorizeRoles("admin"), getAllHireNurse);
+router.route("/admin/hire/nurse/:id").put(isAuthenticatedUser, authorizeRoles("admin"), updateHireNurse)
+router.route("/admin/hire/nurse/:id").delete(isAuthenticatedUser, authorizeRoles("admin"), deleteHireNurse);
 
 
 
