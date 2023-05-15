@@ -28,7 +28,7 @@ exports.createDoctor = asyncHandler(async (req, res) => {
      SendEmail({
         email: req.body.email,
         subject: "MKM Health Bridge",
-        message: `Hii ${req.body.name}, Your profile is created on MKM Health Bridge online `
+        message: `Hii Dr. ${req.body.name}, Your profile is created on MKM Health Bridge online `
     });
     res.status(201).json({ success: true, newDoctor });
 });
@@ -111,6 +111,11 @@ exports.updateDoctor = asyncHandler(async (req, res, next) => {
         new: true,
         runValidators: true,
         useFindAndModify: false,
+    });
+    SendEmail({
+        email: req.body.email,
+        subject: "MKM Health Bridge",
+        message: `Hii Dr. ${doctor.name}, Your profile is updated on MKM Health Bridge online `
     });
     res.status(200).json({
         success: true,
