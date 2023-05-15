@@ -1,8 +1,32 @@
 const doctorModel = require('../models/Doctors');
 const asyncHandler = require('express-async-handler');
 const ApiFeatures = require('../utilies/apiFeatures');
+const cloudinary = require("cloudinary");
 // only admin access this 
 exports.createDoctor = asyncHandler(async (req, res) => {
+    let images = [];
+
+  if (typeof req.body.images === "string") {
+    images.push(req.body.images);
+  } else {
+    images = req.body.images;
+  }
+
+  const imagesLinks = [];
+
+  for (let i = 0; i < images.length; i++) {
+    const result = await cloudinary.v2.uploader.upload(images[i], {
+      folder: "doctors",
+    });
+
+    imagesLinks.push({
+      public_id: result.public_id,
+      url: result.secure_url,
+    });
+  }
+
+  req.body.images = imagesLinks;
+  req.body.user = req.user.id;
     const newDoctor = await doctorModel.create(req.body);
     res.status(201).json({ success: true, newDoctor });
 });
@@ -52,6 +76,35 @@ exports.updateDoctor = asyncHandler(async (req, res, next) => {
             message: "Doctor is not found !!"
         });
     }
+    let images = [];
+
+  if (typeof req.body.images === "string") {
+    images.push(req.body.images);
+  } else {
+    images = req.body.images;
+  }
+
+  if (images !== undefined) {
+    // Deleting Images From Cloudinary
+    for (let i = 0; i < doctor.images.length; i++) {
+      await cloudinary.v2.uploader.destroy(doctor.images[i].public_id);
+    }
+
+    const imagesLinks = [];
+
+    for (let i = 0; i < images.length; i++) {
+      const result = await cloudinary.v2.uploader.upload(images[i], {
+        folder: "doctors",
+      });
+
+      imagesLinks.push({
+        public_id: result.public_id,
+        url: result.secure_url,
+      });
+    }
+
+    req.body.images = imagesLinks;
+  }
     doctor = await doctorModel.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true,

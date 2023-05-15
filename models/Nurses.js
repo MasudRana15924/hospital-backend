@@ -25,7 +25,7 @@ const nurseSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-  
+
     degree: {
         type: String,
         required: true,
@@ -56,22 +56,18 @@ const nurseSchema = mongoose.Schema({
     },
     reviews: [
         {
-              user: {
+            user: {
                 type: mongoose.Schema.ObjectId,
                 ref: "User",
-                // required: true,
-              },
+            },
             name: {
                 type: String,
-                // required: true,
             },
             rating: {
                 type: Number,
-                // required: true,
             },
             comment: {
                 type: String,
-                // required: true,
             },
         },
     ],
@@ -79,11 +75,6 @@ const nurseSchema = mongoose.Schema({
         type: Number,
         required: true
     },
-    // user: {
-    //     type: mongoose.Schema.ObjectId,
-    //     ref: "User",
-    //     required: true,
-    //   },
     createdAt: {
         type: Date,
         default: Date.now,

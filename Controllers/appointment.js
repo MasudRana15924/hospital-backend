@@ -50,15 +50,10 @@ exports.newAppointment = async (req, res, next) => {
 
 // get Single 
 exports.getSingleAppointment = async (req, res, next) => {
-  const appointment = await appointmentModel.findById(req.params.id).populate(
-    "user",
-    "name email"
-  );
-
+  const appointment = await appointmentModel.findById(req.params.id)
   if (!appointment) {
     res.json({ message: "Not found a appointment with this id" })
   }
-
   res.status(200).json({
     success: true,
     appointment,
@@ -90,19 +85,16 @@ exports.getAllAppointments = async (req, res, next) => {
 };
 // update 
 exports.updateBooking = async (req, res, next) => {
-  const bookingStatus = req.body;
-  const appointment = await appointmentModel.findByIdAndUpdate(req.params.id, bookingStatus, {
-    new: true,
-    runValidators: true,
-    useFindAndModify: false,
+  const {bookingStatus,patientname,patientemail,doctorname} = req.body;
+  const appointment = await appointmentModel.findByIdAndUpdate(req.params.id, bookingStatus, );
+  await appointment.save();
+  if(appointment){
+    await SendEmail({
+      email: patientemail,
+      subject: "You have booked an Appointment",
+     message:`Hii ${patientname}, You have booked an Appointment of Dr. ${doctorname} is C`
   });
-  if (!appointment) {
-    res.json({ message: "Booking appointment is not Found" });
   }
-  if (appointment.bookingStatus=="Confirmed") {
-    res.json({ message: "Booking already confirmed" });
-  }
-  await appointment.save({ validateBeforeSave: false });
   res.status(200).json({
     success: true,
     appointment
