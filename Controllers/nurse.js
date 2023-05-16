@@ -2,15 +2,41 @@ const asyncHandler = require('express-async-handler');
 const nurseModel = require('../models/Nurses');
 const sendToken = require('../utilies/jwtToken');
 const ApiFeatures = require('../utilies/apiFeatures');
-
+const cloudinary = require("cloudinary");
+const SendEmail = require('../utilies/sendEmail');
 
 // only admin access this 
 exports.createNurse = asyncHandler(async (req, res) => {
+    let images = [];
+    if (typeof req.body.images === "string") {
+        images.push(req.body.images);
+    } else {
+        images = req.body.images;
+    }
+    const imagesLinks = [];
+    for (let i = 0; i < images.length; i++) {
+        const result = await cloudinary.v2.uploader.upload(images[i], {
+            folder: "nurses",
+        });
+
+        imagesLinks.push({
+            public_id: result.public_id,
+            url: result.secure_url,
+        });
+    }
+    req.body.images = imagesLinks;
+    req.body.user = req.user.id;
     const newNurse = await nurseModel.create(req.body);
+   
     res.status(201).json({
         success: true,
         newNurse,
       });
+      SendEmail({
+        email: req.body.email,
+        subject: "MKM Health Bridge",
+        message: `Hii  ${req.body.name}, Your profile is created on MKM Health Bridge online as an Nurse`
+    });
 });
 exports.getAllNurses = asyncHandler(async (req, res) => {
     const resultPerPage=5;
@@ -89,3 +115,55 @@ exports.getNurseReviews = async (req, res, next) => {
         reviews: nurse.reviews,
     });
 };
+exports.updateNurse=async(req,res)=>{
+    let nurse = await nurseModel.findById(req.params.id);
+    if (!nurse) {
+        return res.status(500).json({
+            success: false,
+            message: "Nurse is not found !!"
+        });
+    }
+    let images = [];
+
+  if (typeof req.body.images === "string") {
+    images.push(req.body.images);
+  } else {
+    images = req.body.images;
+  }
+
+  if (images !== undefined) {
+    // Deleting Images From Cloudinary
+    for (let i = 0; i < nurse.images.length; i++) {
+      await cloudinary.v2.uploader.destroy(nurse.images[i].public_id);
+    }
+
+    const imagesLinks = [];
+
+    for (let i = 0; i < images.length; i++) {
+      const result = await cloudinary.v2.uploader.upload(images[i], {
+        folder: "nurses",
+      });
+
+      imagesLinks.push({
+        public_id: result.public_id,
+        url: result.secure_url,
+      });
+    }
+
+    req.body.images = imagesLinks;
+  }
+    nurse = await nurseModel.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true,
+        useFindAndModify: false,
+    });
+    SendEmail({
+        email: req.body.email,
+        subject: "MKM Health Bridge",
+        message: `Hello ${nurse.name}, Your profile is updated on MKM Health Bridge online `
+    });
+    res.status(200).json({
+        success: true,
+        nurse,
+    });
+}
