@@ -85,20 +85,21 @@ exports.getAllAppointments = async (req, res, next) => {
 };
 // update 
 exports.updateBooking = async (req, res, next) => {
-  const {bookingStatus,patientname,patientemail,doctorname} = req.body;
-  const appointment = await appointmentModel.findByIdAndUpdate(req.params.id, bookingStatus, );
-  await appointment.save();
-  if(appointment){
-    await SendEmail({
-      email: patientemail,
-      subject: "You have booked an Appointment",
-     message:`Hii ${patientname}, You have booked an Appointment of Dr. ${doctorname} is C`
-  });
-  }
+  const {bookingStatus,patientemail,patientname,doctorname} = req.body;
+  const appointment = await appointmentModel.findByIdAndUpdate(req.params.id, bookingStatus);
+  appointment.bookingStatus=req.body.bookingStatus;
+  await appointment.save({ validateBeforeSave: false });
   res.status(200).json({
     success: true,
     appointment
   });
+  await SendEmail({
+    email: patientemail,
+    subject: "Appointment Update",
+    message: `Hii ${patientname}, Your Appointment of Dr. ${doctorname} is ${bookingStatus}`
+  });
+  
+ 
 };
 
 // delete 
