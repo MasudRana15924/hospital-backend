@@ -25,7 +25,9 @@ cloudinary.config({
 });
 const routes = require('./route/routes');
 app.use("/api", routes);
-
+app.get('/', (req, res) => {
+  res.send('MKM Health Bridge is Running')
+});
 const server = app.listen(port, () => {
     console.log(`Server is running on port  ${port}`);
 });

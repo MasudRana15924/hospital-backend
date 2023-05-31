@@ -22,15 +22,16 @@ exports.createUser = async (req, res, next) => {
         };
         const activationToken = createActivationToken(user);
         const activationUrl = `http://localhost:3000/activation/${activationToken}`;
-        await SendEmail({
+
+        res.status(201).json({
+            success: true,
+            message: `please check your email:- ${user.email} to activate your account!`,
+        });
+         SendEmail({
             email: user.email,
             subject: "Activate your account",
             message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
 
-        });
-        res.status(201).json({
-            success: true,
-            message: `please check your email:- ${user.email} to activate your account!`,
         });
     } catch (error) {
         return next(new ErrorHandler(error.message, 400));
@@ -202,10 +203,10 @@ exports.updateProfile = async (req, res, next) => {
 
 exports.updateAvatar = async (req, res,next) => {
     try {
-        if (req.body.avatar !== "") {
+        
             const user = await userModel.findById(req.user.id);
-            // const imageId = user.avatar.public_id;
-            // await cloudinary.v2.uploader.destroy(imageId);
+            const imageId = user.avatar.public_id;
+            await cloudinary.v2.uploader.destroy(imageId);
             const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
                 folder: "avatars",
                 width: 150,
@@ -213,11 +214,11 @@ exports.updateAvatar = async (req, res,next) => {
             });
             let newUserData;
             newUserData.avatar = {
-                // public_id: myCloud.public_id,
+                public_id: myCloud.public_id,
                 url: myCloud.secure_url,
             };
-        }
-        const user = await userModel.findByIdAndUpdate(req.user.id, newUserData, {
+        
+        const updateUser = await userModel.findByIdAndUpdate(req.user.id, newUserData, {
             new: true,
             runValidators: true,
             useFindAndModify: false,
@@ -225,7 +226,7 @@ exports.updateAvatar = async (req, res,next) => {
 
         res.status(200).json({
             success: true,
-            user
+            updateUser
         });
     } catch (error) {
         return next(new ErrorHandler(error.message, 400));
