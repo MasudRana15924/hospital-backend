@@ -5,6 +5,7 @@ const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 const { newAppointment, getSingleAppointment, myAppointment, getAllAppointments, updateBooking, deleteAppointment } = require("../Controllers/appointment");
 const { createNurse, getAllNurses, getNurses, nurseDetails, createNursesReview, getNurseReviews, updateNurse } = require("../Controllers/nurse");
 const { newHireNurse, getSingleHireNurse, myHireNurse, getAllHireNurse, updateHireNurse, deleteHireNurse } = require("../Controllers/hireNurse");
+const { createCategory, getAllCategory } = require("../Controllers/Category");
 const router = express.Router();
 
 // users routes
@@ -62,6 +63,9 @@ router.route("/admin/hire/nurse/:id").delete(isAuthenticatedUser, authorizeRoles
 router.route("/nurse/:id").put(isAuthenticatedUser, authorizeRoles("admin"),updateNurse);
 
 
+// create category
+router.route("/create/category").post( createCategory);
+router.route("/category").get(getAllCategory);
 
 
 

@@ -40,13 +40,15 @@ exports.getAllDoctors = asyncHandler(async (req, res) => {
         .search()
         .filter()
         
-    const doctors = await apiFeature.query;
+    let doctors = await apiFeature.query;
+    let filteredDoctorsCount = doctors.length;
     apiFeature.pagination(resultPerPage);
     res.status(200).json({
         success:true,
          doctors,
          doctorCount,
-         resultPerPage
+         resultPerPage,
+         filteredDoctorsCount
 
     });
 });

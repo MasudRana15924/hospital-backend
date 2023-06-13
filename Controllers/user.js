@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const cloudinary = require('cloudinary');
 const crypto = require("crypto");
 const ErrorHandler = require("../utilies/ErrorHandler");
+const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 
 
 exports.createUser = async (req, res, next) => {
@@ -14,25 +15,42 @@ exports.createUser = async (req, res, next) => {
         if (findUser) {
             return next(new ErrorHandler("User already exists", 400));
         }
-        const user = {
-            name: name,
-            email: email,
-            password: password,
+        const user = await userModel.create({
+            name,
+            email,
+            password,
+           
+          });
+        
+          sendToken(user, 201, res);
+          SendEmail({
+                 email: user.email,
+                subject: "Activate Your Account",
+             message: `Hello ${user.name}, your account is create`,
+    
+             });
 
-        };
-        const activationToken = createActivationToken(user);
-        const activationUrl = `http://localhost:3000/activation/${activationToken}`;
 
-        res.status(201).json({
-            success: true,
-            message: `please check your email:- ${user.email} to activate your account!`,
-        });
-         SendEmail({
-            email: user.email,
-            subject: "Activate your account",
-            message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
 
-        });
+        // const user = {
+        //     name: name,
+        //     email: email,
+        //     password: password,
+
+        // };
+        // const activationToken = createActivationToken(user);
+        // const activationUrl = `http://localhost:3000/activation/${activationToken}`;
+
+        // res.status(201).json({
+        //     success: true,
+        //     message: `please check your email:- ${user.email} to activate your account!`,
+        // });
+        //  SendEmail({
+        //     email: user.email,
+        //     subject: "Activate your account",
+        //     message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
+
+        // });
     } catch (error) {
         return next(new ErrorHandler(error.message, 400));
     }
@@ -59,12 +77,12 @@ exports.verifyEmail = async (req, res, next) => {
         if (user) {
             return next(new ErrorHandler("User already exists", 400));
         }
-        user = await userModel.create({
+        registerUser = await userModel.create({
             name,
             email,
             password,
         });
-        sendToken(user, 201, res);
+        sendToken(registerUser, 201, res);
     } catch (error) {
         return next(new ErrorHandler(error.message, 500));
     }
@@ -104,11 +122,11 @@ exports.logout = async (req, res) => {
     });
 };
 // Forgot Password
-exports.forgotPassword = async (req, res, next) => {
+exports.forgotPassword =catchAsyncErrors (async (req, res, next) => {
     const { email } = req.body;
     const user = await userModel.findOne({ email: email });
     if (!user) {
-        return next(("User not found", 404));
+        return next(new ErrorHandler("User not found", 404));
     }
     // Get ResetPassword Token
     const resetToken = user.getResetPasswordToken();
@@ -129,9 +147,10 @@ exports.forgotPassword = async (req, res, next) => {
         user.resetPasswordToken = undefined;
         user.resetPasswordExpire = undefined;
         await user.save({ validateBeforeSave: false });
-        return next((error.message, 500));
+        return next(new ErrorHandler(error.message, 500));
     }
-};
+
+});
 
 // Reset Password
 exports.resetPassword = async (req, res, next) => {

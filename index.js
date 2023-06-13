@@ -1,6 +1,7 @@
 const express = require('express');
 const connectDatabase = require('./config/connection');
 const app = express();
+const SSLCommerzPayment = require('sslcommerz-lts')
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
@@ -11,7 +12,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true,
+}));
 
 const port = process.env.PORT || 5000;
 connectDatabase();
@@ -20,6 +24,7 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
 const routes = require('./route/routes');
 app.use("/api", routes);
 app.get('/', (req, res) => {
