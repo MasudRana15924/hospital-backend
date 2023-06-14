@@ -6,6 +6,9 @@ const { newAppointment, getSingleAppointment, myAppointment, getAllAppointments,
 const { createNurse, getAllNurses, getNurses, nurseDetails, createNursesReview, getNurseReviews, updateNurse } = require("../Controllers/nurse");
 const { newHireNurse, getSingleHireNurse, myHireNurse, getAllHireNurse, updateHireNurse, deleteHireNurse } = require("../Controllers/hireNurse");
 const { createCategory, getAllCategory } = require("../Controllers/Category");
+const { createFees, getAllFees } = require("../Controllers/priceCat");
+const { createGender, getAllGender } = require("../Controllers/gender");
+const { createRatings, getAllRatings } = require("../Controllers/ratings");
 const router = express.Router();
 
 // users routes
@@ -66,7 +69,11 @@ router.route("/nurse/:id").put(isAuthenticatedUser, authorizeRoles("admin"),upda
 // create category
 router.route("/create/category").post( createCategory);
 router.route("/category").get(getAllCategory);
-
-
+router.route("/create/fees").post( createFees);
+router.route("/fees").get(getAllFees);
+router.route("/create/gender").post( createGender);
+router.route("/gender").get(getAllGender);
+router.route("/create/rating").post( createRatings);
+router.route("/ratings").get(getAllRatings);
 
 module.exports = router;
