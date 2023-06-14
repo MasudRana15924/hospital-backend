@@ -9,6 +9,7 @@ const { createCategory, getAllCategory } = require("../Controllers/Category");
 const { createFees, getAllFees } = require("../Controllers/priceCat");
 const { createGender, getAllGender } = require("../Controllers/gender");
 const { createRatings, getAllRatings } = require("../Controllers/ratings");
+const { newBloodBooking } = require("../Controllers/bloods");
 const router = express.Router();
 
 // users routes
@@ -76,4 +77,7 @@ router.route("/gender").get(getAllGender);
 router.route("/create/rating").post( createRatings);
 router.route("/ratings").get(getAllRatings);
 
+
+// blood
+router.route("/blood/booking").post( newBloodBooking);
 module.exports = router;
