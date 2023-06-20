@@ -10,11 +10,11 @@ const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 
 exports.createUser = async (req, res, next) => {
     try {
-        const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-            folder: "avatars",
-            width: 150,
-            crop: "scale",
-          });
+        // const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+        //     folder: "avatars",
+        //     width: 150,
+        //     crop: "scale",
+        //   });
         const { name, email, password } = req.body;
         const findUser = await userModel.findOne({ email: email });
         if (findUser) {
@@ -24,10 +24,10 @@ exports.createUser = async (req, res, next) => {
             name,
             email,
             password,
-            avatar: {
-                public_id: myCloud.public_id,
-                url: myCloud.secure_url,
-              },
+            // avatar: {
+            //     public_id: myCloud.public_id,
+            //     url: myCloud.secure_url,
+            //   },
            
           });
         
