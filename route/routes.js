@@ -10,6 +10,7 @@ const { createFees, getAllFees } = require("../Controllers/priceCat");
 const { createGender, getAllGender } = require("../Controllers/gender");
 const { createRatings, getAllRatings } = require("../Controllers/ratings");
 const { newBloodBooking } = require("../Controllers/bloods");
+const { registerDoctor } = require("../Controllers/doctors");
 const router = express.Router();
 
 // users routes
@@ -29,7 +30,8 @@ router.route("/admin/user/:id")
 .put(isAuthenticatedUser, authorizeRoles("admin"), updateUserRole)
 .delete( deleteUser);
 
-
+// doctor as a user 
+router.route("/register/doctor").post(registerDoctor);
 // doctors routes
 router.route("/doctor").post(isAuthenticatedUser, authorizeRoles("admin"), createDoctor);
 router.route("/doctors").get(getAllDoctors);
@@ -80,4 +82,6 @@ router.route("/ratings").get(getAllRatings);
 
 // blood
 router.route("/blood/booking").post( newBloodBooking);
+
+
 module.exports = router;
