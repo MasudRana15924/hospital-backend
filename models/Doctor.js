@@ -15,13 +15,9 @@ const newDoctorSchema = new mongoose.Schema({
 	
 	gender: {
 		type: String,
-        required: true,
+         required: true,
 	},
-	
-	birthdate: {
-		type: String,
-        required: true,
-	},
+
     district: {
 		type:String,
         required: true,
