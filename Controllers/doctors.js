@@ -50,3 +50,25 @@ exports.registerDoctor =catchAsyncErrors( async (req, res, next) => {
         return next(new ErrorHandler(error.message, 400));
     }
 });
+exports.loginDoctor = async (req, res, next) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        res.json({ message: "Please Enter Email & Password" });
+    }
+    const doctor = await newDoctorModel.findOne({ email }).select("+password");
+    if (!doctor) {
+        return next(new ErrorHandler("Doctor doesn't exists!", 400));
+    }
+    const isPasswordMatched = await doctor.comparePassword(password);
+    if (!isPasswordMatched) {
+        return next(
+            new ErrorHandler("Email & password does not matched", 400)
+        );
+    }
+    if (isPasswordMatched) {
+        sendToken(doctor, 200, res);
+    }
+    else {
+        res.json({ message: "Please valid Password" });
+    }
+};

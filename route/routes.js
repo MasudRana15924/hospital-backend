@@ -10,7 +10,7 @@ const { createFees, getAllFees } = require("../Controllers/priceCat");
 const { createGender, getAllGender } = require("../Controllers/gender");
 const { createRatings, getAllRatings } = require("../Controllers/ratings");
 const { newBloodBooking } = require("../Controllers/bloods");
-const { registerDoctor } = require("../Controllers/doctors");
+const { registerDoctor, loginDoctor } = require("../Controllers/doctors");
 const router = express.Router();
 
 // users routes
@@ -32,6 +32,9 @@ router.route("/admin/user/:id")
 
 // doctor as a user 
 router.route("/register/doctor").post(registerDoctor);
+router.route("/login/doctor").post(loginDoctor);
+
+
 // doctors routes
 router.route("/doctor").post(isAuthenticatedUser, authorizeRoles("admin"), createDoctor);
 router.route("/doctors").get(getAllDoctors);
