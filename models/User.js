@@ -4,9 +4,41 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
 const userSchema = new mongoose.Schema({
+	title: {
+		type: String,
+		// required: true,
+	},
 	name: {
 		type: String,
 		required: true,
+	},
+
+	gender: {
+		type: String,
+		//  required: true,
+	},
+	birthdate: {
+		type: String,
+	},
+	district: {
+		type: String,
+		// required: true,
+	},
+	nid_No: {
+		type: Number,
+		// required: true,
+	},
+	bmdc_No: {
+		type: Number,
+		// required: true,
+	},
+	type: {
+		type: String,
+		// required: true,
+	},
+	phone: {
+		type: Number,
+		// required: true,
 	},
 	email: {
 		type: String,
@@ -19,27 +51,18 @@ const userSchema = new mongoose.Schema({
 	},
 	role: {
 		type: String,
-		default: "user",
-	},
-	gender: {
-		type: String,
-	},
-	phone: {
-		type: String,
-	},
-	birthdate: {
-		type: String,
+		 default: "user",
 	},
 	avatar: {
 		public_id: {
-		  type: String,
-		//   required: true,
+			type: String,
+			//   required: true,
 		},
 		url: {
-		  type: String,
-		//   required: true,
+			type: String,
+			//   required: true,
 		},
-	  },
+	},
 	createdAt: {
 		type: Date,
 		default: Date.now,
@@ -47,6 +70,49 @@ const userSchema = new mongoose.Schema({
 
 	resetPasswordToken: String,
 	resetPasswordExpire: Date,
+	// name: {
+	// 	type: String,
+	// 	required: true,
+	// },
+	// email: {
+	// 	type: String,
+	// 	required: true,
+	// },
+	// password: {
+	// 	type: String,
+	// 	required: true,
+	// 	select: false,
+	// },
+	// role: {
+	// 	type: String,
+	// 	default: "user",
+	// },
+	// gender: {
+	// 	type: String,
+	// },
+	// phone: {
+	// 	type: String,
+	// },
+	// birthdate: {
+	// 	type: String,
+	// },
+	// avatar: {
+	// 	public_id: {
+	// 	  type: String,
+	// 	//   required: true,
+	// 	},
+	// 	url: {
+	// 	  type: String,
+	// 	//   required: true,
+	// 	},
+	//   },
+	// createdAt: {
+	// 	type: Date,
+	// 	default: Date.now,
+	// },
+
+	// resetPasswordToken: String,
+	// resetPasswordExpire: Date,
 });
 userSchema.pre("save", async function (next) {
 	if (!this.isModified("password")) {
