@@ -8,7 +8,7 @@ const ErrorHandler = require("../utilies/ErrorHandler");
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 
 
-exports.registerDoctor = async (req, res, next) => {
+exports.registerDoctor =catchAsyncErrors( async (req, res, next) => {
     try {
         const {title, name,gender,birthdate,district,nid_No,bmdc_No,type,phone, email, password } = req.body;
         const findDoctor = await newDoctorModel.findOne({ email: email });
@@ -49,4 +49,4 @@ exports.registerDoctor = async (req, res, next) => {
     } catch (error) {
         return next(new ErrorHandler(error.message, 400));
     }
-};
+});
