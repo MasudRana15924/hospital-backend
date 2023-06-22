@@ -1,6 +1,6 @@
 const express = require("express");
 const { createUser, getAllUsers, loginUser, logout, forgotPassword, getUserDetails, updatePassword, updateProfile,getSingleUser, updateUserRole, deleteUser, verifyEmail, resetPassword, updateAvatar } = require("../Controllers/user");
-const { createDoctor, getAllDoctors, getDoctors, updateDoctor, deleteDoctor, doctorDetails, createDoctorReview,getDoctorReviews, deleteReview } = require("../Controllers/doctor");
+const { createDoctor, getAllDoctors, getDoctors, updateDoctor, deleteDoctor, doctorDetails, createDoctorReview,getDoctorReviews, deleteReview, loginDoctor, logoutDoctor } = require("../Controllers/doctor");
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 const { newAppointment, getSingleAppointment, myAppointment, getAllAppointments, updateBooking, deleteAppointment } = require("../Controllers/appointment");
 const { createNurse, getAllNurses, getNurses, nurseDetails, createNursesReview, getNurseReviews, updateNurse } = require("../Controllers/nurse");
@@ -10,7 +10,7 @@ const { createFees, getAllFees } = require("../Controllers/priceCat");
 const { createGender, getAllGender } = require("../Controllers/gender");
 const { createRatings, getAllRatings } = require("../Controllers/ratings");
 const { newBloodBooking } = require("../Controllers/bloods");
-const { registerDoctor, loginDoctor } = require("../Controllers/doctors");
+
 const router = express.Router();
 
 // users routes
@@ -31,12 +31,11 @@ router.route("/admin/user/:id")
 .delete( deleteUser);
 
 // doctor as a user 
-router.route("/register/doctor").post(registerDoctor);
+router.route("/register/doctor").post(createDoctor);
 router.route("/login/doctor").post(loginDoctor);
+router.route("/update/doctor").put(isAuthenticatedUser,logoutDoctor);
 
-
-// doctors routes
-router.route("/doctor").post(isAuthenticatedUser, authorizeRoles("admin"), createDoctor);
+// router.route("/doctor").post(isAuthenticatedUser, authorizeRoles("admin"), createDoctor);
 router.route("/doctors").get(getAllDoctors);
 router.route("/admin/doctors").get(isAuthenticatedUser, authorizeRoles("admin"), getDoctors);
 router.route("/doctor/:id").put(isAuthenticatedUser, authorizeRoles("admin"),updateDoctor);

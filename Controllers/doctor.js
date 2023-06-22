@@ -3,35 +3,112 @@ const asyncHandler = require('express-async-handler');
 const ApiFeatures = require('../utilies/apiFeatures');
 const cloudinary = require("cloudinary");
 const SendEmail = require('../utilies/sendEmail');
+const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
+const sendToken = require('../utilies/jwtToken');
 // only admin access this 
-exports.createDoctor = asyncHandler(async (req, res) => {
-    let images = [];
-    if (typeof req.body.images === "string") {
-        images.push(req.body.images);
-    } else {
-        images = req.body.images;
-    }
-    const imagesLinks = [];
-    for (let i = 0; i < images.length; i++) {
-        const result = await cloudinary.v2.uploader.upload(images[i], {
-            folder: "doctors",
-        });
+// exports.createDoctor = asyncHandler(async (req, res) => {
+//     let images = [];
+//     if (typeof req.body.images === "string") {
+//         images.push(req.body.images);
+//     } else {
+//         images = req.body.images;
+//     }
+//     const imagesLinks = [];
+//     for (let i = 0; i < images.length; i++) {
+//         const result = await cloudinary.v2.uploader.upload(images[i], {
+//             folder: "doctors",
+//         });
 
-        imagesLinks.push({
-            public_id: result.public_id,
-            url: result.secure_url,
-        });
-    }
-    req.body.images = imagesLinks;
-    req.body.user = req.user.id;
-    const newDoctor = await doctorModel.create(req.body);
-     SendEmail({
-        email: req.body.email,
-        subject: "MKM Health Bridge",
-        message: `Hii Dr. ${req.body.name}, Your profile is created on MKM Health Bridge online `
-    });
-    res.status(201).json({ success: true, newDoctor });
+//         imagesLinks.push({
+//             public_id: result.public_id,
+//             url: result.secure_url,
+//         });
+//     }
+//     req.body.images = imagesLinks;
+//     req.body.user = req.user.id;
+//     const newDoctor = await doctorModel.create(req.body);
+//      SendEmail({
+//         email: req.body.email,
+//         subject: "MKM Health Bridge",
+//         message: `Hii Dr. ${req.body.name}, Your profile is created on MKM Health Bridge online `
+//     });
+//     res.status(201).json({ success: true, newDoctor });
+// });
+exports.createDoctor = catchAsyncErrors(async (req, res, next) => {
+  try {
+      const { title, name, gender, birthdate, district, nid_No, bmdc_No, type, phone, email, password, work, expert, degree,experience } = req.body;
+      // const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+      //     folder: "avatars",
+      //     width: 150,
+      //     crop: "scale",
+      // });
+      const findDoctor = await doctorModel.findOne({ email: email });
+      if (findDoctor) {
+          return next(new ErrorHandler("doctor already exists", 400));
+      }
+      const doctor = await doctorModel.create({
+          title, name, gender, birthdate, district, nid_No, bmdc_No, type,
+          phone, email, password, work, expert, degree,experience
+          // avatar: {
+          //     public_id: myCloud.public_id,
+          //     url: myCloud.secure_url,
+          // },
+      });
+
+      sendToken(doctor, 201, res);
+      SendEmail({
+          email: doctor.email,
+          subject: "Activate Your Account",
+          message: `Hello ${doctor.name}, your account is create`,
+      });
+  } catch (error) {
+      return next(new ErrorHandler(error.message, 400));
+  }
 });
+exports.loginDoctor = async (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+      res.json({ message: "Please Enter Email & Password" });
+  }
+  const doctor = await doctorModel.findOne({ email }).select("+password");
+
+  if (!doctor) {
+      return next(new ErrorHandler("Doctor doesn't exists!", 400));
+  }
+  const isPasswordMatched = await doctor.comparePassword(password);
+  if (!isPasswordMatched) {
+      return next(
+          new ErrorHandler("Email & password does not matched", 400)
+      );
+  }
+  if (isPasswordMatched) {
+
+      sendToken(doctor, 200, res);
+      await doctorModel.updateOne({ email }, { $set: { isActive: 'true' } })
+      // res.send(updateDoctor);
+
+  }
+
+  else {
+      res.json({ message: "Please valid Password" });
+  }
+};
+exports.logoutDoctor = async (req, res) => {
+  // res.cookie("token", null, {
+  //     expires: new Date(Date.now()),
+  //     httpOnly: true,
+  // });
+  const { email } = req.body;
+  const updateDoctor = await doctorModel.updateOne({ email }, { $set: { isActive: 'false' } })
+  res.status(200).json({
+      success: true,
+      updateDoctor
+  });
+};
+
+
+
+
 // get all doctor for users
 exports.getAllDoctors = asyncHandler(async (req, res) => {
     const resultPerPage=5;
