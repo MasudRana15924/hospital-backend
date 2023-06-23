@@ -94,16 +94,26 @@ exports.loginDoctor = async (req, res, next) => {
   }
 };
 exports.logoutDoctor = async (req, res) => {
-  // res.cookie("token", null, {
-  //     expires: new Date(Date.now()),
-  //     httpOnly: true,
+  // const { email } = req.body;
+  // const doctor=  await doctorModel.updateOne({ email }, { $set: { isActive: 'false' } });
+  //   res.status(200).json({
+  //     success: true,
+  //     doctor
   // });
-  const { email } = req.body;
-  const updateDoctor = await doctorModel.updateOne({ email }, { $set: { isActive: 'false' } })
-  res.status(200).json({
-      success: true,
-      updateDoctor
-  });
+  const { isActive } = req.body;
+  const newData={
+      isActive
+  }
+  const doctor = await doctorModel.findByIdAndUpdate(req.user.id, newData, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+});
+
+res.status(200).json({
+    success: true,
+    doctor
+});
 };
 
 
