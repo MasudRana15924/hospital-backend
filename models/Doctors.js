@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const doctorsSchema = mongoose.Schema({
- 
     title: {
         type: String,
         required: true,

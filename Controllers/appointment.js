@@ -7,6 +7,7 @@ const SSLCommerzPayment = require('sslcommerz-lts')
 exports.newAppointment = async (req, res, next) => {
   const {
     doctorname,
+    doctoremail,
     doctorfees,
     doctorimage,
     doctorId,
@@ -22,6 +23,7 @@ exports.newAppointment = async (req, res, next) => {
 
   const appointment = await appointmentModel.create({
     doctorname,
+    doctoremail,
     doctorfees,
     doctorimage,
     doctorId,
@@ -51,14 +53,24 @@ exports.newAppointment = async (req, res, next) => {
     cus_country: 'Bangladesh',
     cus_phone: appointment?.phone,
   };
-console.log(data)
   if (appointment) {
     await SendEmail({
       email: patientemail,
       subject: "You have booked an Appointment",
       message: `Hii ${patientname}, You have booked an Appointment of Dr. ${doctorname} \n\n Appointment Fees ${doctorfees} \n\n Appointment Date ${date} \n\n Appointment Schedule ${schedule}`
     });
+    await SendEmail({
+      email: patientemail,
+        subject: "You have booked an Appointment",
+        message: `Hii ${patientname}, You have booked an Appointment of Dr. ${doctorname} \n\n Appointment Fees ${doctorfees} \n\n Appointment Date ${date} \n\n Appointment Schedule ${schedule}`
+      });
   }
+  await SendEmail({
+    email: doctoremail,
+      subject: "You have booked an Appointment",
+      message: `Hii ${doctorname} , You got Appointment from ${patientname}  \n\n Appointment Date ${date} \n\n Appointment Schedule ${schedule}`
+    });
+
   const is_live = false;
   const sslcz = new SSLCommerzPayment(process.env.STORE_ID, process.env.STORE_PASSWORD, is_live);
   let GatewayPageURL
@@ -71,7 +83,6 @@ console.log(data)
     appointment,
     GatewayPageURL,
   });
-  console.log('Redirecting to: ', GatewayPageURL)
 };
 
 // get Single 
@@ -94,6 +105,15 @@ exports.myAppointment = async (req, res, next) => {
 
   });
 };
+// doctor got his appointment list
+exports.doctorAppointment = async (req, res, next) => {
+  const appointment = await appointmentModel.find({doctorId: req.doctor._id });
+  res.status(200).json({
+    success: true,
+    appointment,
+  });
+};
+
 // get all Appointments
 exports.getAllAppointments = async (req, res, next) => {
   const resultPerPage = 3;
