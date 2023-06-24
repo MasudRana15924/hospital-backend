@@ -5,38 +5,13 @@ const cloudinary = require("cloudinary");
 const SendEmail = require('../utilies/sendEmail');
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 const sendToken = require('../utilies/jwtToken');
-// only admin access this 
-// exports.createDoctor = asyncHandler(async (req, res) => {
-//     let images = [];
-//     if (typeof req.body.images === "string") {
-//         images.push(req.body.images);
-//     } else {
-//         images = req.body.images;
-//     }
-//     const imagesLinks = [];
-//     for (let i = 0; i < images.length; i++) {
-//         const result = await cloudinary.v2.uploader.upload(images[i], {
-//             folder: "doctors",
-//         });
+const sendDoctorToken = require('../utilies/jwtToken');
+const ErrorHandler = require('../utilies/ErrorHandler');
 
-//         imagesLinks.push({
-//             public_id: result.public_id,
-//             url: result.secure_url,
-//         });
-//     }
-//     req.body.images = imagesLinks;
-//     req.body.user = req.user.id;
-//     const newDoctor = await doctorModel.create(req.body);
-//      SendEmail({
-//         email: req.body.email,
-//         subject: "MKM Health Bridge",
-//         message: `Hii Dr. ${req.body.name}, Your profile is created on MKM Health Bridge online `
-//     });
-//     res.status(201).json({ success: true, newDoctor });
-// });
+
 exports.createDoctor = catchAsyncErrors(async (req, res, next) => {
   try {
-      const { title, name, gender, birthdate, district, nid_No, bmdc_No, type, phone, email, password, work, expert, degree,experience } = req.body;
+      const { title, name, gender, birthdate, district, nid_No, bmdc_No, type, phone, email, password, work, expert, degree,experience,fees } = req.body;
       // const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
       //     folder: "avatars",
       //     width: 150,
@@ -48,18 +23,19 @@ exports.createDoctor = catchAsyncErrors(async (req, res, next) => {
       }
       const doctor = await doctorModel.create({
           title, name, gender, birthdate, district, nid_No, bmdc_No, type,
-          phone, email, password, work, expert, degree,experience
+          phone, email, password, work, expert, degree,experience,fees
           // avatar: {
           //     public_id: myCloud.public_id,
           //     url: myCloud.secure_url,
           // },
       });
 
-      sendToken(doctor, 201, res);
+       sendToken(doctor, 201, res);
+    //   sendDoctorToken(doctor, 201, res);
       SendEmail({
           email: doctor.email,
-          subject: "Activate Your Account",
-          message: `Hello ${doctor.name}, your account is create`,
+          subject: "Account Create",
+          message: `Hello ${doctor.name}, your account is create in HealthBridge`,
       });
   } catch (error) {
       return next(new ErrorHandler(error.message, 400));
@@ -70,8 +46,7 @@ exports.loginDoctor = async (req, res, next) => {
   if (!email || !password) {
       res.json({ message: "Please Enter Email & Password" });
   }
-  const doctor = await doctorModel.findOne({ email }).select("+password");
-
+   const doctor = await doctorModel.findOne({ email }).select("+password");
   if (!doctor) {
       return next(new ErrorHandler("Doctor doesn't exists!", 400));
   }
@@ -82,41 +57,32 @@ exports.loginDoctor = async (req, res, next) => {
       );
   }
   if (isPasswordMatched) {
-
       sendToken(doctor, 200, res);
+    // sendDoctorToken(doctor, 201, res);
       await doctorModel.updateOne({ email }, { $set: { isActive: 'true' } })
-      // res.send(updateDoctor);
-
   }
-
   else {
       res.json({ message: "Please valid Password" });
   }
 };
-exports.logoutDoctor = async (req, res) => {
-  // const { email } = req.body;
-  // const doctor=  await doctorModel.updateOne({ email }, { $set: { isActive: 'false' } });
-  //   res.status(200).json({
-  //     success: true,
-  //     doctor
-  // });
-  const { isActive } = req.body;
-  const newData={
-      isActive
-  }
-  const doctor = await doctorModel.findByIdAndUpdate(req.user.id, newData, {
-    new: true,
-    runValidators: true,
-    useFindAndModify: false,
-});
 
-res.status(200).json({
-    success: true,
-    doctor
-});
+exports.logoutDoctor = async (req, res) => {
+  const { email } = req.body;
+  const doctor=  await doctorModel.updateOne({ email }, { $set: { isActive: 'false' } });
+    res.status(200).json({
+      success: true,
+      doctor
+  });
 };
 
-
+// Get User Detail
+exports.getDoctorDetails = async (req, res, next) => {
+    const doctor = await doctorModel.findById(req.doctor.id);
+    res.status(200).json({
+        success: true,
+        doctor,
+    });
+};
 
 
 // get all doctor for users
