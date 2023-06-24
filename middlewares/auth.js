@@ -2,8 +2,8 @@ const userModel = require('../models/User');
 const doctorModel = require('../models/Doctors');
 const jwt = require("jsonwebtoken");
 exports.isAuthenticatedUser = async (req, res, next) => {
-  // const token = req.header("Authorization");
-  const { token } = req.cookies;
+  const token = req.header("Authorization");
+  // const { token } = req.cookies;
   if (!token) {
     res.status(401).json({ message: "Please Login to access" });
   }
@@ -14,8 +14,8 @@ exports.isAuthenticatedUser = async (req, res, next) => {
 
 
 exports.isAuthenticatedDoctor = async (req, res, next) => {
-  // const token = req.header("Authorization");
-  const { token } = req.cookies;
+  const token = req.header("Authorization");
+  // const { token } = req.cookies;
   if (!token) {
     res.status(401).json({ message: "Please Login to access" });
   }
