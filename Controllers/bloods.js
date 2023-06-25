@@ -17,15 +17,8 @@ exports.newBloodBooking = async (req, res, next) => {
     email,
     phone,
     group,
+    // user: req.user._id,
   });
- 
-  if (bloods) {
-    await SendEmail({
-      email: email,
-      subject: "Emergency Blood",
-      message: `Hii ${name}, You have apply for ${group} blood & we will contact very soon`
-    });
-  }
   res.status(201).json({
     success: true,
     bloods,
