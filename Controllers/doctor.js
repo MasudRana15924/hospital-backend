@@ -4,7 +4,7 @@ const ApiFeatures = require('../utilies/apiFeatures');
 const cloudinary = require("cloudinary");
 const SendEmail = require('../utilies/sendEmail');
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
-const sendToken = require('../utilies/jwtToken');
+// const sendToken = require('../utilies/jwtToken');
 const sendDoctorToken = require('../utilies/jwtToken');
 const ErrorHandler = require('../utilies/ErrorHandler');
 
@@ -57,8 +57,8 @@ exports.loginDoctor = async (req, res, next) => {
       );
   }
   if (isPasswordMatched) {
-      sendToken(doctor, 200, res);
-    // sendDoctorToken(doctor, 201, res);
+      // sendToken(doctor, 200, res);
+       sendDoctorToken(doctor, 201, res);
       await doctorModel.updateOne({ email }, { $set: { isActive: 'true' } })
   }
   else {
@@ -77,7 +77,7 @@ exports.logoutDoctor = async (req, res) => {
 
 // Get User Detail
 exports.getDoctorDetails = async (req, res, next) => {
-    const doctor = await doctorModel.findById(req.doctor.id);
+    const doctor = await doctorModel.findById(req.user.id);
     res.status(200).json({
         success: true,
         doctor,

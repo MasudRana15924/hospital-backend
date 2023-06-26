@@ -2,7 +2,7 @@ const express = require("express");
 const { createUser, getAllUsers, loginUser, logout, forgotPassword, getUserDetails, updatePassword, updateProfile,getSingleUser, updateUserRole, deleteUser, verifyEmail, resetPassword, updateAvatar } = require("../Controllers/user");
 const { createDoctor, getAllDoctors, getDoctors, updateDoctor, deleteDoctor, doctorDetails, createDoctorReview,getDoctorReviews, deleteReview, loginDoctor, logoutDoctor, getDoctorDetails } = require("../Controllers/doctor");
 const { isAuthenticatedUser, authorizeRoles, isAuthenticatedDoctor } = require("../middlewares/auth");
-const { newAppointment, getSingleAppointment, myAppointment, getAllAppointments, updateBooking, deleteAppointment, doctorAppointment } = require("../Controllers/appointment");
+const { newAppointment, getSingleAppointment, myAppointment, getAllAppointments, updateBooking, deleteAppointment, doctorAppointment, updatePrescription } = require("../Controllers/appointment");
 const { createNurse, getAllNurses, getNurses, nurseDetails, createNursesReview, getNurseReviews, updateNurse } = require("../Controllers/nurse");
 const { newHireNurse, getSingleHireNurse, myHireNurse, getAllHireNurse, updateHireNurse, deleteHireNurse } = require("../Controllers/hireNurse");
 const { createCategory, getAllCategory } = require("../Controllers/Category");
@@ -34,7 +34,7 @@ router.route("/admin/user/:id")
 // doctor as a user 
 router.route("/register/doctor").post(createDoctor);
 router.route("/login/doctor").post(loginDoctor);
-router.route("/update/doctor").put(isAuthenticatedUser,logoutDoctor);
+router.route("/logout/doctor").post(isAuthenticatedUser,logoutDoctor);
 router.route("/current/Doctor/Details").get(isAuthenticatedDoctor, getDoctorDetails);
 // router.route("/doctor").post(isAuthenticatedUser, authorizeRoles("admin"), createDoctor);
 router.route("/doctors").get(getAllDoctors);
@@ -49,9 +49,9 @@ router.route("/doctors/reviews").delete(isAuthenticatedUser, deleteReview);
 // appointment routes 
 router.route("/new/appointment").post(isAuthenticatedUser, newAppointment);
 router.route("/appointment/:id").get(isAuthenticatedUser, getSingleAppointment);
-router.route("/mybooking").get(isAuthenticatedUser, myAppointment);
-
 router.route("/single/doctor/appointment").get(isAuthenticatedDoctor,doctorAppointment);
+ router.route("/mybooking").get(isAuthenticatedUser, myAppointment);
+router.route("/doctor/appointment/:id").put(isAuthenticatedDoctor,  updatePrescription)
 router.route("/getall/appointment").get(isAuthenticatedUser, authorizeRoles("admin"), getAllAppointments);
 router.route("/admin/appointment/:id").put(isAuthenticatedUser, authorizeRoles("admin"), updateBooking)
 router.route("/admin/appointment/:id").delete(isAuthenticatedUser, authorizeRoles("admin"), deleteAppointment);

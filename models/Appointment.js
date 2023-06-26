@@ -55,6 +55,9 @@ const appointmentSchema = new mongoose.Schema({
     required: true,
     default: "Processing",
   },
+  prescription: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
