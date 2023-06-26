@@ -107,12 +107,29 @@ exports.myAppointment = async (req, res, next) => {
 };
 // doctor got his appointment list
 exports.doctorAppointment = async (req, res, next) => {
-  const appointment = await appointmentModel.find({doctorId: req.doctor._id });
+  const appointment = await appointmentModel.find({doctorId: req.user._id });
   res.status(200).json({
     success: true,
     appointment,
   });
 };
+exports.updatePrescription = async (req, res, next) => {
+  const {prescription,patientemail,patientname } = req.body;
+  const appointment = await appointmentModel.findByIdAndUpdate(req.params.id, prescription);
+  appointment.prescription = req.body.prescription;
+  await appointment.save({ validateBeforeSave: false });
+  res.status(200).json({
+    success: true,
+    appointment
+  });
+  await SendEmail({
+    email: patientemail,
+    subject: "Appointment Update",
+    message: `Hii ${patientname}, You have a prescription ${prescription}`
+  });
+};
+
+
 
 // get all Appointments
 exports.getAllAppointments = async (req, res, next) => {
