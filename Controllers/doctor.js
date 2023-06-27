@@ -130,6 +130,19 @@ exports.doctorResetPassword = async (req, res, next) => {
   await doctor.save();
   sendDoctorToken(doctor, 201, res);
 }
+exports.doctorUpdatePassword = async (req, res, next) => {
+  const doctor = await doctorModel.findById(req.user._id).select("+password");
+  const isPasswordMatched = await doctor.comparePassword(req.body.oldPassword);
+  if (!isPasswordMatched) {
+      return next(new ErrorHandler("Old password does not match", 400));
+  }
+  if (req.body.newPassword !== req.body.confirmPassword) {
+      return next(new ErrorHandler("New password & confirm password not matched", 400));
+  }
+  doctor.password = req.body.newPassword;
+  await doctor.save();
+  sendDoctorToken(doctor, 200, res);
+};
 
 // Get User Detail
 exports.getDoctorDetails = async (req, res, next) => {
