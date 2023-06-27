@@ -186,10 +186,10 @@ exports.updatePassword = async (req, res, next) => {
     const user = await userModel.findById(req.user.id).select("+password");
     const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
     if (!isPasswordMatched) {
-        res.json({ message: "Old Password is not Matched" });
+        return next(new ErrorHandler("Old password does not match", 400));
     }
     if (req.body.newPassword !== req.body.confirmPassword) {
-        res.json({ message: "Password is not Matched" });
+        return next(new ErrorHandler("New password & confirm password not matched", 400));
     }
     user.password = req.body.newPassword;
     await user.save();
