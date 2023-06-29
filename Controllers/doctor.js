@@ -12,26 +12,26 @@ const crypto = require("crypto");
 exports.createDoctor = catchAsyncErrors(async (req, res, next) => {
   try {
     const { title, name, gender, birthdate, district, nid_No, bmdc_No, type, phone, email, password, work, expert, degree, experience, fees } = req.body;
-    // const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-    //     folder: "avatars",
-    //     width: 150,
-    //     crop: "scale",
-    // });
+    const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+        folder: "avatars",
+        width: 150,
+        crop: "scale",
+    });
     const findDoctor = await doctorModel.findOne({ email: email });
     if (findDoctor) {
       return next(new ErrorHandler("doctor already exists", 400));
     }
     const doctor = await doctorModel.create({
       title, name, gender, birthdate, district, nid_No, bmdc_No, type,
-      phone, email, password, work, expert, degree, experience, fees
-      // avatar: {
-      //     public_id: myCloud.public_id,
-      //     url: myCloud.secure_url,
-      // },
+      phone, email, password, work, expert, degree, experience, fees,
+      avatar: {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+      },
     });
 
-    sendToken(doctor, 201, res);
-    //   sendDoctorToken(doctor, 201, res);
+    // sendToken(doctor, 201, res);
+    sendDoctorToken(doctor, 201, res);
     SendEmail({
       email: doctor.email,
       subject: "Account Create",

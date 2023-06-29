@@ -19,14 +19,14 @@ const doctorsSchema = mongoose.Schema({
 
     district: {
         type: String,
-        required: true,
+        // required: true,
     },
     nid_No: {
         type: Number,
         required: true,
     },
     bmdc_No: {
-        type: Number,
+        type: String,
         required: true,
     },
     type: {

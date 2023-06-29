@@ -10,22 +10,33 @@ const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 
 exports.createUser = async (req, res, next) => {
     try {
-        const { title, name,gender,birthdate,district,nid_No,bmdc_No,type,phone, email, password,role  } = req.body;
+        const { title, name, gender, birthdate, district, nid_No, bmdc_No, type, phone, email, password, role } = req.body;
         const findUser = await userModel.findOne({ email: email });
+        const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+            folder: "avatars",
+            width: 300,
+            crop: "scale",
+            fileSize: 5 * 1024 * 1024 
+            
+        });
         if (findUser) {
             return next(new ErrorHandler("User already exists", 400));
         }
         const user = await userModel.create({
-            title, name,gender,birthdate,district,nid_No,bmdc_No,type,phone, email, password ,role
-          });
-        
-          sendToken(user, 201, res);
-          SendEmail({
-                 email: user.email,
-                subject: "Activate Your Account",
-             message: `Hello ${user.name}, your account is create`,
-    
-             });
+            title, name, gender, birthdate, district, nid_No, bmdc_No, type, phone, email, password, role,
+            avatar: {
+                public_id: myCloud.public_id,
+                url: myCloud.secure_url,
+            },
+        });
+
+        sendToken(user, 201, res);
+        SendEmail({
+            email: user.email,
+            subject: "Activate Your Account",
+            message: `Hello ${user.name}, your account is create`,
+
+        });
 
         // const user = {
         //     name: name,
@@ -117,7 +128,7 @@ exports.logout = async (req, res) => {
     });
 };
 // Forgot Password
-exports.forgotPassword =catchAsyncErrors (async (req, res, next) => {
+exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
     const { email } = req.body;
     const user = await userModel.findOne({ email: email });
     if (!user) {
@@ -199,39 +210,59 @@ exports.updatePassword = async (req, res, next) => {
 
 // update User Profile
 exports.updateProfile = async (req, res, next) => {
-    const { name, gender, birthdate, phone } = req.body;
-    const newUserData = {
-        name, gender, birthdate, phone
-    };
-    const user = await userModel.findByIdAndUpdate(req.user.id, newUserData, {
+    // const { name, gender, birthdate, phone } = req.body;
+    // const newUserData = {
+    //     name, gender, birthdate, phone
+    // };
+        const newUserData = req.body;
+         const user = await userModel.findById(req.user._id);
+        if(user){
+            const imageId = user.avatar.public_id;
+        await cloudinary.v2.uploader.destroy(imageId);
+        const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+            folder: "avatars",
+            width: 150,
+            crop: "scale",
+            limits: {
+                fileSize: 5 * 1024 * 1024 
+              }
+        });
+        newUserData.avatar = {
+            public_id: myCloud.public_id,
+            url: myCloud.secure_url,
+        };
+    
+      const updateUser = await userModel.findByIdAndUpdate(req.user.id, newUserData, {
         new: true,
         runValidators: true,
         useFindAndModify: false,
     });
-
     res.status(200).json({
         success: true,
-        user
+        updateUser
     });
+        }else {
+            res.json({ message: "User not found" });
+        }
 };
 
-exports.updateAvatar = async (req, res,next) => {
+exports.updateAvatar = async (req, res, next) => {
     try {
-        
-            const user = await userModel.findById(req.user.id);
-            const imageId = user.avatar.public_id;
-            await cloudinary.v2.uploader.destroy(imageId);
-            const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-                folder: "avatars",
-                width: 150,
-                crop: "scale",
-            });
-            let newUserData;
-            newUserData.avatar = {
-                public_id: myCloud.public_id,
-                url: myCloud.secure_url,
-            };
-        
+
+        const user = await userModel.findById(req.user.id);
+        const imageId = user.avatar.public_id;
+        await cloudinary.v2.uploader.destroy(imageId);
+        const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+            folder: "avatars",
+            width: 150,
+            crop: "scale",
+        });
+        let newUserData;
+        newUserData.avatar = {
+            public_id: myCloud.public_id,
+            url: myCloud.secure_url,
+        };
+
         const updateUser = await userModel.findByIdAndUpdate(req.user.id, newUserData, {
             new: true,
             runValidators: true,
