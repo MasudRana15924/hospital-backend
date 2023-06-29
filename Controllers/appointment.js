@@ -6,11 +6,14 @@ const SSLCommerzPayment = require('sslcommerz-lts')
 // Create new appointment
 exports.newAppointment = async (req, res, next) => {
   const {
+    doctortitle,
     doctorname,
     doctoremail,
     doctorfees,
     doctorimage,
     doctorId,
+    doctordegree,
+    doctorwork,
     phone,
     fees,
     totalFees,
@@ -22,11 +25,14 @@ exports.newAppointment = async (req, res, next) => {
   } = req.body;
 
   const appointment = await appointmentModel.create({
+    doctortitle,
     doctorname,
     doctoremail,
     doctorfees,
     doctorimage,
     doctorId,
+    doctordegree,
+    doctorwork,
     phone,
     fees,
     totalFees,
