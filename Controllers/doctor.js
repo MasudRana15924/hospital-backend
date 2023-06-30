@@ -85,7 +85,8 @@ exports.doctorforgotPassword = catchAsyncErrors(async (req, res, next) => {
   // Get ResetPassword Token
   const resetToken = doctor.getResetPasswordToken();
   await doctor.save({ validateBeforeSave: false }); //database e save
-  const resetPasswordUrl = `${process.env.FRONTEND_URL}/forgot/password/reset/${resetToken}`;
+  // const resetPasswordUrl = `${process.env.FRONTEND_URL}/forgot/password/reset/${resetToken}`;
+  const resetPasswordUrl = `https://diu-health-bridge.netlify.app/forgot/password/reset/${resetToken}`;
   const message = `Your password reset token is :- ${resetPasswordUrl}`;
   try {
     await SendEmail({
