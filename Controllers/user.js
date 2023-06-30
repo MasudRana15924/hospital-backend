@@ -172,12 +172,13 @@ exports.resetPassword = async (req, res, next) => {
     });
     if (!user) {
         return next(
-            "Reset Password Token is invalid or has been expired",
-            400
-        );
+            new ErrorHandler("Reset Password Token Expired", 400)
+          );
     }
     if (req.body.password !== req.body.confirmPassword) {
-        return next(("Password does not password", 400));
+        return next(
+            new ErrorHandler("Both password does not matched", 400)
+          );
     }
     user.password = req.body.password;
     user.resetPasswordToken = undefined;
