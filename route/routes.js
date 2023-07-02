@@ -2,7 +2,7 @@ const express = require("express");
 const { createUser, getAllUsers, loginUser, logout, forgotPassword, getUserDetails, updatePassword, updateProfile,getSingleUser, updateUserRole, deleteUser, verifyEmail, resetPassword, updateAvatar } = require("../Controllers/user");
 const { createDoctor, getAllDoctors, getDoctors, updateDoctor, deleteDoctor, doctorDetails, createDoctorReview,getDoctorReviews, deleteReview, loginDoctor, logoutDoctor, getDoctorDetails, doctorforgotPassword, doctorResetPassword, doctorUpdatePassword } = require("../Controllers/doctor");
 const { isAuthenticatedUser, authorizeRoles, isAuthenticatedDoctor } = require("../middlewares/auth");
-const { newAppointment, getSingleAppointment, myAppointment, getAllAppointments, updateBooking, deleteAppointment, doctorAppointment, updatePrescription, paymentSuccessful } = require("../Controllers/appointment");
+const { newAppointment, getSingleAppointment, myAppointment, getAllAppointments, updateBooking, deleteAppointment, doctorAppointment, updatePrescription, paymentSuccessful, newOnsiteAppointment } = require("../Controllers/appointment");
 const { createNurse, getAllNurses, getNurses, nurseDetails, createNursesReview, getNurseReviews, updateNurse } = require("../Controllers/nurse");
 const { newHireNurse, getSingleHireNurse, myHireNurse, getAllHireNurse, updateHireNurse, deleteHireNurse } = require("../Controllers/hireNurse");
 const { createCategory, getAllCategory } = require("../Controllers/Category");
@@ -52,6 +52,7 @@ router.route("/doctors/reviews").delete(isAuthenticatedUser, deleteReview);
 
 // appointment routes 
 router.route("/new/appointment").post(isAuthenticatedUser, newAppointment);
+router.route("/new/onsiteappointment").post(isAuthenticatedUser, newOnsiteAppointment);
 router.route("/success/:tranId").post(paymentSuccessful);
 router.route("/appointment/:id").get(isAuthenticatedUser, getSingleAppointment);
 router.route("/single/doctor/appointment").get(isAuthenticatedDoctor,doctorAppointment);

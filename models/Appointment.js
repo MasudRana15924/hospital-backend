@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const appointmentSchema = new mongoose.Schema({
   doctortitle: {
     type: String,
-    required: true,
+    // required: true,
   },
   doctorname: {
     type: String,
@@ -21,11 +21,11 @@ const appointmentSchema = new mongoose.Schema({
   },
   doctordegree: {
     type: String,
-    required: true,
+    // required: true,
   },
   doctorwork: {
     type: String,
-    required: true,
+    // required: true,
   },
   user: {
     type: mongoose.Schema.ObjectId,
@@ -38,7 +38,7 @@ const appointmentSchema = new mongoose.Schema({
   },
   fees: {
     type: Number,
-    required: true,
+    // required: true,
     default: 0,
   },
   patientname: {
