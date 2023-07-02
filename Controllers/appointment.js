@@ -177,6 +177,17 @@ exports.newAppointment = async (req, res) => {
     paidStatus:false,
     trans_id:tran_id,
   });
+  await SendEmail({
+    email: patientemail,
+    subject: "You have booked an Appointment",
+    message: `Hii ${patientname}, You have booked an Appointment of Dr. ${doctorname} \n\n Appointment Fees ${doctorfees} \n\n Appointment Date ${date} \n\n Appointment Schedule ${schedule}`
+  });
+
+  await SendEmail({
+    email: doctoremail,
+    subject: "You have booked an Appointment",
+    message: `Hii ${doctorname} , You got Appointment from ${patientname}  \n\n Appointment Date ${date} \n\n Appointment Schedule ${schedule}`
+  });
 }
 exports.paymentSuccessful=async(req,res,next)=>{
     const appointment=await appointmentModel.updateOne({trans_id:req.params.tranId},{
