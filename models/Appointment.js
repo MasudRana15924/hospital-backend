@@ -74,7 +74,7 @@ const appointmentSchema = new mongoose.Schema({
     default:false
   },
   paidStatus:{
-    type:String,
+    type:Boolean,
     default:false
   },
   trans_id:{
