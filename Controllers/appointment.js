@@ -97,6 +97,7 @@ exports.newAppointment = async (req, res) => {
     patientgender,
     date,
     schedule,
+    url,
   } = req.body;
 
   // const appointment = await appointmentModel.create({
@@ -122,7 +123,7 @@ exports.newAppointment = async (req, res) => {
     total_amount: req.body.doctorfees,
     currency: 'BDT',
     tran_id: tran_id, // use unique tran_id for each api call
-    success_url: 'http://localhost:3030/success',
+    success_url: `http://localhost:5000/api/success/${tran_id}`,
     fail_url: 'http://localhost:3030/fail',
     cancel_url: 'http://localhost:3030/cancel',
     ipn_url: 'http://localhost:3030/ipn',
@@ -171,9 +172,25 @@ exports.newAppointment = async (req, res) => {
     patientgender,
     date,
     schedule,
+    url,
     user: req.user._id,
+    paidStatus:false,
+    trans_id:tran_id,
   });
 }
+exports.paymentSuccessful=async(req,res,next)=>{
+    const appointment=await appointmentModel.updateOne({trans_id:req.params.tranId},{
+      $set:{
+        paidStatus:true
+      }
+    });
+    if(appointment.modifiedCount>0){
+      res.redirect(`http://localhost:3000/payment/successfull/${req.params.tranId}`);
+    }
+}
+
+
+
 
 // get Single 
 exports.getSingleAppointment = async (req, res, next) => {
