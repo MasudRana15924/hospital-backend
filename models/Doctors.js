@@ -61,8 +61,8 @@ const doctorsSchema = mongoose.Schema({
         },
     },
     isActive: {
-        type: String,
-        default: "false",
+        type: Boolean,
+        default: false,
     },
     work: {
         type: String,

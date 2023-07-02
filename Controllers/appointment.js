@@ -151,10 +151,11 @@ exports.newAppointment = async (req, res) => {
     paidStatus:false,
     trans_id:tran_id,
   });
-  await SendEmail({
+  if(appointment){
+await SendEmail({
     email: patientemail,
     subject: "You have booked an Appointment",
-    message: `Hii ${patientname}, You have booked an Appointment of Dr. ${doctorname} \n\n Appointment Fees ${doctorfees}`
+    message: `Hii ${patientname}, You have booked an Appointment of Dr. ${doctorname} \n\n link ${url} `
   });
 
   await SendEmail({
@@ -162,6 +163,8 @@ exports.newAppointment = async (req, res) => {
     subject: "You have booked an Appointment",
     message: `Hii ${doctorname} , You got Appointment from ${patientname} `
   });
+  }
+  
 }
 exports.paymentSuccessful=async(req,res,next)=>{
     const appointment=await appointmentModel.updateOne({trans_id:req.params.tranId},{
@@ -171,6 +174,7 @@ exports.paymentSuccessful=async(req,res,next)=>{
     });
     if(appointment.modifiedCount>0){
       res.redirect(`https://diu-health-bridge.netlify.app/payment/successfull/${req.params.tranId}`);
+
     }
 }
 
