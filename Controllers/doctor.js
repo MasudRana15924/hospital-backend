@@ -13,9 +13,9 @@ exports.createDoctor = catchAsyncErrors(async (req, res, next) => {
   try {
     const { title, name, gender, birthdate, district, nid_No, bmdc_No, type, phone, email, password, work, expert, degree, experience, fees } = req.body;
     const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-        folder: "avatars",
-        width: 150,
-        crop: "scale",
+      folder: "avatars",
+      width: 150,
+      crop: "scale",
     });
     const findDoctor = await doctorModel.findOne({ email: email });
     if (findDoctor) {
@@ -25,8 +25,8 @@ exports.createDoctor = catchAsyncErrors(async (req, res, next) => {
       title, name, gender, birthdate, district, nid_No, bmdc_No, type,
       phone, email, password, work, expert, degree, experience, fees,
       avatar: {
-          public_id: myCloud.public_id,
-          url: myCloud.secure_url,
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
       },
     });
 
@@ -135,14 +135,29 @@ exports.doctorUpdatePassword = async (req, res, next) => {
   const doctor = await doctorModel.findById(req.user._id).select("+password");
   const isPasswordMatched = await doctor.comparePassword(req.body.oldPassword);
   if (!isPasswordMatched) {
-      return next(new ErrorHandler("Old password does not match", 400));
+    return next(new ErrorHandler("Old password does not match", 400));
   }
   if (req.body.newPassword !== req.body.confirmPassword) {
-      return next(new ErrorHandler("New password & confirm password not matched", 400));
+    return next(new ErrorHandler("New password & confirm password not matched", 400));
   }
   doctor.password = req.body.newPassword;
   await doctor.save();
   sendDoctorToken(doctor, 200, res);
+};
+exports.doctorUpdateUrl = async (req, res, next) => {
+  const newData = {
+    url: req.body.url,
+  };
+ const doctor= await doctorModel.findByIdAndUpdate(req.user._id, newData, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
+  res.status(200).json({
+    success: true,
+    doctor
+  });
+
 };
 
 // Get User Detail

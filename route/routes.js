@@ -1,6 +1,6 @@
 const express = require("express");
 const { createUser, getAllUsers, loginUser, logout, forgotPassword, getUserDetails, updatePassword, updateProfile,getSingleUser, updateUserRole, deleteUser, verifyEmail, resetPassword, updateAvatar } = require("../Controllers/user");
-const { createDoctor, getAllDoctors, getDoctors, updateDoctor, deleteDoctor, doctorDetails, createDoctorReview,getDoctorReviews, deleteReview, loginDoctor, logoutDoctor, getDoctorDetails, doctorforgotPassword, doctorResetPassword, doctorUpdatePassword } = require("../Controllers/doctor");
+const { createDoctor, getAllDoctors, getDoctors, updateDoctor, deleteDoctor, doctorDetails, createDoctorReview,getDoctorReviews, deleteReview, loginDoctor, logoutDoctor, getDoctorDetails, doctorforgotPassword, doctorResetPassword, doctorUpdatePassword, doctorUpdateUrl } = require("../Controllers/doctor");
 const { isAuthenticatedUser, authorizeRoles, isAuthenticatedDoctor } = require("../middlewares/auth");
 const { newAppointment, getSingleAppointment, myAppointment, getAllAppointments, updateBooking, deleteAppointment, doctorAppointment, updatePrescription, paymentSuccessful, newOnsiteAppointment } = require("../Controllers/appointment");
 const { createNurse, getAllNurses, getNurses, nurseDetails, createNursesReview, getNurseReviews, updateNurse } = require("../Controllers/nurse");
@@ -40,7 +40,7 @@ router.route("/current/Doctor/Details").get(isAuthenticatedDoctor, getDoctorDeta
 router.route("/doctor/forgotPassword").post( doctorforgotPassword);
 router.route("/forgot/password/reset/:token").put(doctorResetPassword);
 router.route("/doctor/updatePassword").put(isAuthenticatedDoctor, doctorUpdatePassword);
-// router.route("/doctor").post(isAuthenticatedUser, authorizeRoles("admin"), createDoctor);
+router.route("/doctor/update/url").put(isAuthenticatedDoctor,  doctorUpdateUrl);
 router.route("/doctors").get(getAllDoctors);
 router.route("/admin/doctors").get(isAuthenticatedUser, authorizeRoles("admin"), getDoctors);
 router.route("/doctor/:id").put(isAuthenticatedUser, authorizeRoles("admin"),updateDoctor);
