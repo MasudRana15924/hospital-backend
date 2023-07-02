@@ -123,7 +123,7 @@ exports.newAppointment = async (req, res) => {
     total_amount: req.body.doctorfees,
     currency: 'BDT',
     tran_id: tran_id, // use unique tran_id for each api call
-    success_url: `http://localhost:5000/api/success/${tran_id}`,
+    success_url: `https://api-hospital-backend.onrender.com/api/success/${tran_id}`,
     fail_url: 'http://localhost:3030/fail',
     cancel_url: 'http://localhost:3030/cancel',
     ipn_url: 'http://localhost:3030/ipn',
