@@ -69,6 +69,20 @@ const appointmentSchema = new mongoose.Schema({
   prescription: {
     type: String,
   },
+  paidStatus:{
+    type:String,
+    default:false
+  },
+  paidStatus:{
+    type:String,
+    default:false
+  },
+  trans_id:{
+    type:String,
+  },
+  url:{
+type:String
+  },
   createdAt: {
     type: Date,
     default: Date.now,
