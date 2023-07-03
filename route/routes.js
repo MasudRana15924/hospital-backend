@@ -35,7 +35,7 @@ router.route("/admin/user/:id")
 // doctor as a user 
 router.route("/register/doctor").post(createDoctor);
 router.route("/login/doctor").post(loginDoctor);
-router.route("/logout/doctor").post(isAuthenticatedUser,logoutDoctor);
+router.route("/logout/doctor").put(isAuthenticatedDoctor,logoutDoctor);
 router.route("/current/Doctor/Details").get(isAuthenticatedDoctor, getDoctorDetails);
 router.route("/doctor/forgotPassword").post( doctorforgotPassword);
 router.route("/forgot/password/reset/:token").put(doctorResetPassword);
