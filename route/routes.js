@@ -11,6 +11,7 @@ const { createGender, getAllGender } = require("../Controllers/gender");
 const { createRatings, getAllRatings } = require("../Controllers/ratings");
 const { newBloodBooking } = require("../Controllers/bloods");
 const { createActive, getActive } = require("../Controllers/active");
+const { createMedicine, getAllMedicines } = require("../Controllers/medicine");
 
 
 const router = express.Router();
@@ -93,6 +94,11 @@ router.route("/create/status").post( createActive);
 router.route("/status").get(getActive);
 // blood
 router.route("/blood/booking").post( newBloodBooking);
+
+
+// medicine
+router.route("/create/medicine").post( createMedicine);
+router.route("/get/medicine").get( getAllMedicines);
 
 
 module.exports = router;
