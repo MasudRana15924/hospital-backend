@@ -219,21 +219,21 @@ exports.updateProfile = async (req, res, next) => {
     // };
         const newUserData = req.body;
          const user = await userModel.findById(req.user._id);
-        if(user){
-            const imageId = user.avatar.public_id;
-        await cloudinary.v2.uploader.destroy(imageId);
-        const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-            folder: "avatars",
-            width: 150,
-            crop: "scale",
-            limits: {
-                fileSize: 5 * 1024 * 1024 
-              }
-        });
-        newUserData.avatar = {
-            public_id: myCloud.public_id,
-            url: myCloud.secure_url,
-        };
+        // if(user){
+        //     const imageId = user.avatar.public_id;
+        // await cloudinary.v2.uploader.destroy(imageId);
+        // const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+        //     folder: "avatars",
+        //     width: 150,
+        //     crop: "scale",
+        //     limits: {
+        //         fileSize: 5 * 1024 * 1024 
+        //       }
+        // });
+        // newUserData.avatar = {
+        //     public_id: myCloud.public_id,
+        //     url: myCloud.secure_url,
+        // };
     
       const updateUser = await userModel.findByIdAndUpdate(req.user.id, newUserData, {
         new: true,
@@ -244,9 +244,9 @@ exports.updateProfile = async (req, res, next) => {
         success: true,
         updateUser
     });
-        }else {
-            res.json({ message: "User not found" });
-        }
+        // }else {
+        //     res.json({ message: "User not found" });
+        // }
 };
 
 exports.updateAvatar = async (req, res, next) => {
