@@ -59,7 +59,7 @@ exports.loginDoctor = async (req, res, next) => {
   if (isPasswordMatched) {
     // sendToken(doctor, 200, res);
     sendDoctorToken(doctor, 201, res);
-    await doctorModel.updateOne({ email }, { $set: { isActive: 'true' } })
+    await doctorModel.updateOne({ email }, { $set: { isActive: true} })
   }
   else {
     res.json({ message: "Please valid Password" });
@@ -67,8 +67,14 @@ exports.loginDoctor = async (req, res, next) => {
 };
 
 exports.logoutDoctor = async (req, res) => {
-  const { email } = req.body;
-  const doctor = await doctorModel.updateOne({ email }, { $set: { isActive: 'false' } });
+  const newData = {
+    isActive: req.body.isActive,
+  };
+  const doctor= await doctorModel.findByIdAndUpdate(req.user._id, newData, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
   res.status(200).json({
     success: true,
     doctor
