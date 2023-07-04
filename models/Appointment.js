@@ -70,10 +70,6 @@ const appointmentSchema = new mongoose.Schema({
     type: String,
   },
   paidStatus:{
-    type:String,
-    default:false
-  },
-  paidStatus:{
     type:Boolean,
     default:false
   },
