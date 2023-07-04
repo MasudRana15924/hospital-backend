@@ -78,3 +78,12 @@ exports.orderPaymentSuccessful=async(req,res,next)=>{
 
     }
 }
+  // get logged in user  Orders je login ache 
+  exports.myOrders = async (req, res, next) => {
+    const orders = await OrderModel.find({ user: req.user._id });
+  
+    res.status(200).json({
+      success: true,
+      orders,
+    });
+  };
