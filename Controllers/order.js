@@ -56,6 +56,7 @@ exports.newOrder = async (req, res, next) => {
         totalPrice,
         paymentInfo,
         user: req.user._id,
+        trans_id:tran_id,
     });
     order.orderItems.forEach(async (o) => {
         await updateStock(o._id, o.cartQuantity);
@@ -74,7 +75,8 @@ exports.orderPaymentSuccessful=async(req,res,next)=>{
       }
     });
     if(order.modifiedCount>0){
-      res.redirect(`https://diu-health-bridge.netlify.app/order/payment/successfull/${req.params.tranId}`);
+    //   res.redirect(`https://diu-health-bridge.netlify.app/order/payment/successfull/${req.params.tranId}`);
+      res.redirect(`http://localhost:3000/order/payment/successfull/${req.params.tranId}`);
 
     }
 }
@@ -84,6 +86,19 @@ exports.orderPaymentSuccessful=async(req,res,next)=>{
   
     res.status(200).json({
       success: true,
+      orders,
+    });
+  };
+  // get all Orders -- Admin
+exports.getAllOrders = async (req, res, next) => {
+    const orders = await OrderModel.find();
+    let totalAmount = 0;
+    orders.forEach((order) => {
+      totalAmount += order.totalPrice;
+    });
+    res.status(200).json({
+      success: true,
+      totalAmount,
       orders,
     });
   };
