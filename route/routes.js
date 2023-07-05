@@ -12,7 +12,7 @@ const { createRatings, getAllRatings } = require("../Controllers/ratings");
 const { newBloodBooking } = require("../Controllers/bloods");
 const { createActive, getActive } = require("../Controllers/active");
 const { createMedicine, getAllMedicines } = require("../Controllers/medicine");
-const { newOrder, orderPaymentSuccessful, myOrders } = require("../Controllers/order");
+const { newOrder, orderPaymentSuccessful, myOrders, getAllOrders } = require("../Controllers/order");
 
 
 const router = express.Router();
@@ -101,7 +101,8 @@ router.route("/blood/booking").post( newBloodBooking);
 router.route("/create/medicine").post( createMedicine);
 router.route("/get/medicine").get( getAllMedicines);
 router.route("/create/order").post(isAuthenticatedUser, newOrder);
-router.route("/order/payment/success/:tran_id").post(orderPaymentSuccessful);
+router.route("/order/payment/success/:tranId").post(orderPaymentSuccessful);
 router.route("/orders/myorders").get(isAuthenticatedUser, myOrders);
+router.route("/admin/allorder").get(isAuthenticatedUser,authorizeRoles("admin"), getAllOrders);
 
 module.exports = router;
