@@ -152,7 +152,7 @@ exports.newAppointment = async (req, res) => {
     trans_id:tran_id,
   });
   if(appointment){
-await SendEmail({
+  await SendEmail({
     email: patientemail,
     subject: "You have booked an Appointment",
     message: `Hii ${patientname}, You have booked an Appointment of Dr. ${doctorname} \n\n link ${url} `
@@ -173,11 +173,9 @@ exports.paymentSuccessful=async(req,res,next)=>{
       }
     });
     if(appointment.modifiedCount>0){
-      res.redirect(`https://diu-health-bridge.netlify.app/payment/successfull/${req.params.tranId}`);
-
-    }
+       res.redirect(`https://diu-health-bridge.netlify.app/payment/successfull/${req.params.tranId}`);
+    }  
 }
-
 // get Single 
 exports.getSingleAppointment = async (req, res, next) => {
   const appointment = await appointmentModel.findById(req.params.id)
