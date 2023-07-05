@@ -60,6 +60,9 @@ const orderSchema = new mongoose.Schema({
     ref: "User",
     // required: true,
   },
+  trans_id:{
+    type:String,
+  },
   paymentInfo: {
       type: String,
       // required: true,
