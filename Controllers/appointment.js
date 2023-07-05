@@ -60,7 +60,7 @@ exports.newOnsiteAppointment = async (req, res, next) => {
     cus_name: req.body.patientname,
     cus_email: req.body.patientemail,
     cus_country: 'Bangladesh',
-     cus_phone: appointment?.phone,
+    cus_phone: appointment?.phone,
   };
   if (appointment) {
     await SendEmail({
@@ -74,10 +74,10 @@ exports.newOnsiteAppointment = async (req, res, next) => {
     subject: "You have booked an Appointment",
     message: `Hii ${doctorname} , You got Appointment from ${patientname}  \n\n Appointment Date ${date} \n\n Appointment Schedule ${schedule}`
   });
-    res.status(201).json({
-      success: true,
-      appointment,
-    });
+  res.status(201).json({
+    success: true,
+    appointment,
+  });
 };
 exports.newAppointment = async (req, res) => {
   const {
@@ -130,9 +130,9 @@ exports.newAppointment = async (req, res) => {
   sslcz.init(data).then(apiResponse => {
     // Redirect the user to payment gateway
     let GatewayPageURL = apiResponse.GatewayPageURL
-    res.send({url:GatewayPageURL});
+    res.send({ url: GatewayPageURL });
   });
-   const appointment = await appointmentModel.create({
+  const appointment = await appointmentModel.create({
     doctortitle,
     doctorname,
     doctoremail,
@@ -148,33 +148,26 @@ exports.newAppointment = async (req, res) => {
     patientemail,
     url,
     user: req.user._id,
-    paidStatus:false,
-    trans_id:tran_id,
+    paidStatus: false,
+    trans_id: tran_id,
   });
-  if(appointment){
-  await SendEmail({
-    email: patientemail,
-    subject: "You have booked an Appointment",
-    message: `Hii ${patientname}, You have booked an Appointment of Dr. ${doctorname} \n\n link ${url} `
-  });
-
-  await SendEmail({
-    email: doctoremail,
-    subject: "You have booked an Appointment",
-    message: `Hii ${doctorname} , You got Appointment from ${patientname} `
-  });
-  }
-  
-}
-exports.paymentSuccessful=async(req,res,next)=>{
-    const appointment=await appointmentModel.updateOne({trans_id:req.params.tranId},{
-      $set:{
-        paidStatus:true
-      }
+  if (appointment) {
+    await SendEmail({
+      email: patientemail,
+      subject: "You have booked an Appointment",
+      message: `Hii ${patientname}, You have booked an Appointment of Dr. ${doctorname} \n\n link ${url} `
     });
-    if(appointment.modifiedCount>0){
-       res.redirect(`https://diu-health-bridge.netlify.app/payment/successfull/${req.params.tranId}`);
-    }  
+  }
+}
+exports.paymentSuccessful = async (req, res, next) => {
+  const appointment = await appointmentModel.updateOne({ trans_id: req.params.tranId }, {
+    $set: {
+      paidStatus: true
+    }
+  });
+  if (appointment.modifiedCount > 0) {
+    res.redirect(`https://diu-health-bridge.netlify.app/payment/successfull/${req.params.tranId}`);
+  }
 }
 // get Single 
 exports.getSingleAppointment = async (req, res, next) => {
