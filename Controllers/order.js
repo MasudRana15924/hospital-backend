@@ -75,8 +75,8 @@ exports.orderPaymentSuccessful=async(req,res,next)=>{
       }
     });
     if(order.modifiedCount>0){
-    //   res.redirect(`https://diu-health-bridge.netlify.app/order/payment/successfull/${req.params.tranId}`);
-      res.redirect(`http://localhost:3000/order/payment/successfull/${req.params.tranId}`);
+      res.redirect(`https://diu-health-bridge.netlify.app/order/payment/successfull/${req.params.tranId}`);
+      // res.redirect(`http://localhost:3000/order/payment/successfull/${req.params.tranId}`);
 
     }
 }
