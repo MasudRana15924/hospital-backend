@@ -5,16 +5,16 @@ const crypto = require("crypto");
 const doctorsSchema = mongoose.Schema({
     title: {
         type: String,
-        required: true,
+        // required: true,
     },
     name: {
         type: String,
-        required: true,
+        // required: true,
     },
 
     gender: {
         type: String,
-        required: true,
+        // required: true,
     },
 
     district: {
@@ -23,27 +23,27 @@ const doctorsSchema = mongoose.Schema({
     },
     nid_No: {
         type: Number,
-        required: true,
+        // required: true,
     },
     bmdc_No: {
         type: String,
-        required: true,
+        // required: true,
     },
     type: {
         type: String,
-        required: true,
+        // required: true,
     },
     phone: {
         type: Number,
-        required: true,
+        // required: true,
     },
     email: {
         type: String,
-        required: true,
+        // required: true,
     },
     password: {
         type: String,
-        required: true,
+        // required: true,
         select: false,
     },
     role: {
@@ -58,7 +58,7 @@ const doctorsSchema = mongoose.Schema({
         url: {
             type: String,
             //   required: true,
-        },
+        }
     },
     isActive: {
         type: Boolean,
@@ -66,7 +66,7 @@ const doctorsSchema = mongoose.Schema({
     },
     work: {
         type: String,
-        required: true,
+        // required: true,
     },
     expert: {
         type: String,
@@ -74,11 +74,11 @@ const doctorsSchema = mongoose.Schema({
     },
     experience: {
         type: Number,
-        required: true,
+        // required: true,
     },
     degree: {
         type: String,
-        required: true,
+        // required: true,
     },
     ratings: {
         type: Number,

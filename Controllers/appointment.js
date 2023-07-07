@@ -89,12 +89,11 @@ exports.newAppointment = async (req, res) => {
     doctorId,
     doctordegree,
     doctorwork,
-    phone,
     fees,
-    totalFees,
-    patientname,
-    patientemail,
-    url,
+    name,
+    email,
+    gender,weight,height,problem,age,
+    meeturl,
   } = req.body;
   const data = {
     total_amount: req.body.doctorfees,
@@ -108,15 +107,15 @@ exports.newAppointment = async (req, res) => {
     product_name: 'Computer.',
     product_category: 'Electronic',
     product_profile: 'general',
-    cus_name: req.body.patientname,
-    cus_email: req.body.patientemail,
+    cus_name: req.body.name,
+    cus_email: req.body.email,
     cus_add1: 'Dhaka',
     cus_add2: 'Dhaka',
     cus_city: 'Dhaka',
     cus_state: 'Dhaka',
     cus_postcode: '1000',
     cus_country: 'Bangladesh',
-    cus_phone: req.body.phone,
+    cus_phone: '01711111111',
     cus_fax: '01711111111',
     ship_name: 'Customer Name',
     ship_add1: 'Dhaka',
@@ -128,7 +127,6 @@ exports.newAppointment = async (req, res) => {
   };
   const sslcz = new SSLCommerzPayment(process.env.STORE_ID, process.env.STORE_PASSWORD, false);
   sslcz.init(data).then(apiResponse => {
-    // Redirect the user to payment gateway
     let GatewayPageURL = apiResponse.GatewayPageURL
     res.send({ url: GatewayPageURL });
   });
@@ -141,21 +139,20 @@ exports.newAppointment = async (req, res) => {
     doctorId,
     doctordegree,
     doctorwork,
-    phone,
     fees,
-    totalFees,
-    patientname,
-    patientemail,
-    url,
+    name,
+    email,
+    gender,weight,height,problem,age,
+    meeturl,
     user: req.user._id,
     paidStatus: false,
     trans_id: tran_id,
   });
   if (appointment) {
     await SendEmail({
-      email: patientemail,
+      email:email,
       subject: "You have booked an Appointment",
-      message: `Hii ${patientname}, You have booked an Appointment of Dr. ${doctorname} \n\n link ${url} `
+      message: `Hii ${name}, You have booked an Appointment of Dr. ${doctorname} \n\n link ${ meeturl} `
     });
   }
 }
@@ -182,7 +179,7 @@ exports.getSingleAppointment = async (req, res, next) => {
 };
 // get logged in user  
 exports.myAppointment = async (req, res, next) => {
-  const appointment = await appointmentModel.find({ user: req.user._id });
+  const appointment = await appointmentModel.find({ user: req.user._id }).sort({createdAt:-1});
   res.status(200).json({
     success: true,
     appointment,
