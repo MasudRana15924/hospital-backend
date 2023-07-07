@@ -32,23 +32,32 @@ const appointmentSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  phone: {
-    type: Number,
-    required: true,
+
+  name: {
+    type: String,
   },
-  fees: {
+  email:{
+    type: String,
+  },
+  gender: {
+    type: String,
+  },
+  age: {
     type: Number,
+    // required: true,
+  },
+  weight: {
+    type: Number,
+    // required: true,
+  },
+  height: {
+    type: String,
     // required: true,
     default: 0,
   },
-  patientname: {
+  problem: {
     type: String,
-  },
-  patientemail: {
-    type: String,
-  },
-  patientgender: {
-    type: String,
+    // required: true,
   },
   schedule: {
     type: String,
@@ -56,28 +65,24 @@ const appointmentSchema = new mongoose.Schema({
   date: {
     type: String,
   },
-  totalFees: {
-    type: Number,
-    required: true,
-    default: 0,
-  },
+
   bookingStatus: {
     type: String,
     required: true,
     default: "Processing",
   },
-  prescription: {
+  paidStatus: {
+    type: Boolean,
+    default: false
+  },
+  trans_id: {
     type: String,
   },
-  paidStatus:{
-    type:Boolean,
-    default:false
+  meeturl: {
+    type: String
   },
-  trans_id:{
-    type:String,
-  },
-  url:{
-type:String
+  url: {
+    type: String
   },
   createdAt: {
     type: Date,

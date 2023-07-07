@@ -180,7 +180,7 @@ exports.getDoctorDetails = async (req, res, next) => {
 exports.getAllDoctors = asyncHandler(async (req, res) => {
   const resultPerPage = 5;
   const doctorCount = await doctorModel.countDocuments();
-  const apiFeature = new ApiFeatures(doctorModel.find(), req.query)
+  const apiFeature = new ApiFeatures(doctorModel.find().sort({createdAt:-1}), req.query)
     .search()
     .filter()
 
