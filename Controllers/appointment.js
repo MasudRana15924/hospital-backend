@@ -100,6 +100,7 @@ exports.newAppointment = async (req, res) => {
     currency: 'BDT',
     tran_id: tran_id, // use unique tran_id for each api call
     success_url: `https://api-hospital-backend.onrender.com/api/success/${tran_id}`,
+    // success_url: `http://localhost:5000/api/success/${tran_id}`,
     fail_url: 'http://localhost:3030/fail',
     cancel_url: 'http://localhost:3030/cancel',
     ipn_url: 'http://localhost:3030/ipn',
@@ -164,6 +165,7 @@ exports.paymentSuccessful = async (req, res, next) => {
   });
   if (appointment.modifiedCount > 0) {
     res.redirect(`https://diu-health-bridge.netlify.app/payment/successfull/${req.params.tranId}`);
+    // res.redirect(`http://localhost:3000/payment/successfull/${req.params.tranId}`);
   }
 }
 // get Single 
