@@ -107,7 +107,7 @@ router.route("/orders/myorders").get(isAuthenticatedUser, myOrders);
 router.route("/admin/allorder").get(isAuthenticatedUser,authorizeRoles("admin"), getAllOrders);
 
 // create prescription
-router.route('/create/prescription').post(isAuthenticatedDoctor,createPrescription)
+router.route('/create/prescription').post(createPrescription);
 router.route('/my/prescription').get(isAuthenticatedUser,myPrescription)
 
 module.exports = router;

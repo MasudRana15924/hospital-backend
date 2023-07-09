@@ -23,7 +23,7 @@ const prescriptionSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.ObjectId,
         ref: "User",
-        required: true,
+        // required: true,
     },
     appointmentId: {
         type: mongoose.Schema.ObjectId,
@@ -43,7 +43,7 @@ const prescriptionSchema = new mongoose.Schema({
         type: String,
         // required: true,
     },
-    medInfo: [
+    medicines: [
         {
             medname: {
                 type: String
