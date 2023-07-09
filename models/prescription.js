@@ -43,6 +43,14 @@ const prescriptionSchema = new mongoose.Schema({
         type: String,
         // required: true,
     },
+    weight: {
+        type: Number,
+        // required: true,
+    },
+    height: {
+        type: String,
+        // required: true,
+    },
     medicines: [
         {
             medname: {
