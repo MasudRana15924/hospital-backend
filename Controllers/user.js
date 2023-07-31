@@ -138,7 +138,8 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
     const resetToken = user.getResetPasswordToken();
     await user.save({ validateBeforeSave: false }); //database e save
     // const resetPasswordUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
-    const resetPasswordUrl = `https://diu-health-bridge.netlify.app/password/reset/${resetToken}`;
+    const resetPasswordUrl = `https://health-bridge-4179.vercel.app/password/reset/${resetToken}`;
+    // const resetPasswordUrl = `https://diu-health-bridge.netlify.app/password/reset/${resetToken}`;
     const message = `Your password reset token is :- ${resetPasswordUrl}`;
     try {
         await SendEmail({
