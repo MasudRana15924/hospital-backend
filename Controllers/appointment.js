@@ -190,7 +190,7 @@ exports.myAppointment = async (req, res, next) => {
 };
 // doctor got his appointment list
 exports.doctorAppointment = async (req, res, next) => {
-  const appointment = await appointmentModel.find({ doctorId: req.user._id });
+  const appointment = await appointmentModel.find({ doctorId: req.user.id });
   res.status(200).json({
     success: true,
     appointment,
